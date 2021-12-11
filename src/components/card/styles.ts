@@ -24,6 +24,28 @@ export const Container = styled.div<ContainerProps>`
     margin-top: 40px;
   }
 
+  .button-delete-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    filter: saturate(1.1);
+    position: absolute;
+    right: 8px;
+    border-radius: 50%;
+    color: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    padding: 2px;
+    top: -8px;
+    right: -8px;
+    background: #fff;
+
+    &:hover {
+      transform: none;
+      background: ${colors.red};
+    }
+  }
+
   .card-title {
     color: rgba(0, 0, 0, 0.5);
   }
@@ -58,25 +80,6 @@ export const CardHeader = styled.header`
       cursor: pointer;
       transition: all 0.1s;
       transform: scale(1.1);
-    }
-  }
-
-  .button-delete-card {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: none;
-    filter: saturate(1.1);
-    position: absolute;
-    right: 8px;
-    border-radius: 4px;
-    color: rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 2px;
-
-    &:hover {
-      transform: none;
-      background: ${colors.red};
     }
   }
 `;

@@ -40,6 +40,9 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <Container currentColor={currentColor}>
+      <button className="button-delete-card" onClick={handleDeleteCard}>
+        <FaPowerOff />
+      </button>
       <CardHeader>
         {Object.keys(colors).map((key) => (
           <button
@@ -48,9 +51,6 @@ const Card: React.FC<CardProps> = ({
             style={{ backgroundColor: colors[key] }}
           />
         ))}
-        <button className="button-delete-card" onClick={handleDeleteCard}>
-          <FaPowerOff />
-        </button>
       </CardHeader>
       <ProgressContent>
         <CircularProgressbar
