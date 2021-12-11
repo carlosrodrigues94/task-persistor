@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { colors } from "../../styles/colors";
 
 export const Container = styled.div`
   z-index: 2;
@@ -49,18 +48,11 @@ export const DivContentButtons = styled.div`
     margin: 0 2px;
     border: 0;
     border-radius: 4px;
-    color: #fff;
+    color: #555;
 
     display: flex;
     align-items: center;
     justify-content: center;
-
-    &:nth-child(1) {
-      background: ${colors.red};
-    }
-    &:nth-child(2) {
-      background: ${colors.green};
-    }
 
     &:hover {
       cursor: pointer;
