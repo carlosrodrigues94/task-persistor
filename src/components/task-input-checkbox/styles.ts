@@ -34,7 +34,7 @@ export const LabelInputCheckBox = styled.label<{ currentColor: string }>`
     cursor: pointer;
   }
 `;
-export const DivContentButtons = styled.div`
+export const DivContentButtons = styled.div<{ currentColor: string }>`
   display: flex;
   margin-left: 8px;
 
@@ -46,10 +46,11 @@ export const DivContentButtons = styled.div`
     height: 20px;
     width: 20px;
     margin: 0 2px;
-    border: 0;
-    border-radius: 4px;
-    color: #555;
+    border: 1px solid rgba(0, 0, 0, 0.1);
 
+    border-radius: 4px;
+    color: ${(props) => props.currentColor};
+    background: none;
     display: flex;
     align-items: center;
     justify-content: center;

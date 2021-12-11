@@ -42,7 +42,7 @@ const TaskInputCheckbox: React.FC<TaskInputCheckboxProps> = ({
         />
         <span>{task.description}</span>
       </LabelInputCheckBox>
-      <DivContentButtons>
+      <DivContentButtons currentColor={currentColor}>
         <button type="button" onClick={() => onClickDeleteTask(task.id)}>
           <FiMinus />
         </button>
