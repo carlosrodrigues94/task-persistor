@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { FormEvent, useContext, useState } from "react";
 import { CardContext } from "../../contexts/card-context";
 import { colors } from "../../styles/colors";
 import { v4 as uuid } from "uuid";
@@ -8,7 +8,9 @@ const Header: React.FC = () => {
   const { cards, setCards } = useContext(CardContext);
   const [inputValue, setInputValue] = useState("");
 
-  function handleClickAddNewCard() {
+  function handleSubmit(event: FormEvent) {
+    event.preventDefault();
+
     if (!inputValue) return;
 
     setCards([...cards, { color: colors.blue, id: uuid(), title: inputValue }]);
@@ -18,16 +20,16 @@ const Header: React.FC = () => {
 
   return (
     <Container>
-      <input
-        type="text"
-        placeholder="Título do Card"
-        className="input-new-card"
-        value={inputValue}
-        onChange={(event) => setInputValue(event.target.value)}
-      />
-      <button type="button" onClick={handleClickAddNewCard}>
-        Adicionar Card
-      </button>
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Título do Card"
+          className="input-new-card"
+          value={inputValue}
+          onChange={(event) => setInputValue(event.target.value)}
+        />
+        <button type="submit">Adicionar Card</button>
+      </form>
     </Container>
   );
 };

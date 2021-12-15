@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FormEvent, useCallback } from "react";
 
 import { Container, Content } from "./styles";
 
@@ -6,7 +6,9 @@ export type SimpleModalProps = {
   isOpen: boolean;
   onClickConfirm: () => void;
   onClickCancel: () => void;
+  onSubmit?: () => void;
   headerText: string;
+  typeButton: "button" | "submit";
 };
 
 const SimpleModal: React.FC<SimpleModalProps> = ({
@@ -15,22 +17,34 @@ const SimpleModal: React.FC<SimpleModalProps> = ({
   onClickConfirm,
   headerText,
   children,
+  typeButton = "button",
+  onSubmit = () => {},
 }) => {
+  const handleSubmit = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+      onSubmit();
+    },
+    [onSubmit]
+  );
+
   return (
     <Container style={{ display: isOpen ? "flex" : "none" }}>
       <Content>
         <header>
           <strong>{headerText}</strong>
         </header>
-        {children}
-        <div className="div-modal-content-buttons">
-          <button onClick={onClickCancel} type="button">
-            Cancelar
-          </button>
-          <button onClick={onClickConfirm} type="button">
-            Confirmar
-          </button>
-        </div>
+        <form onSubmit={handleSubmit} className="form-content-modal">
+          {children}
+          <div className="div-modal-content-buttons">
+            <button onClick={onClickCancel} type="button">
+              Cancelar
+            </button>
+            <button onClick={onClickConfirm} type={typeButton}>
+              Confirmar
+            </button>
+          </div>
+        </form>
       </Content>
     </Container>
   );

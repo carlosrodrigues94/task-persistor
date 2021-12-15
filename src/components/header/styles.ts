@@ -12,25 +12,31 @@ export const Container = styled.div`
   background: #dcdde1;
   top: 0;
 
-  .input-new-card {
-    height: 40px;
-    width: 250px;
-    border-radius: 8px;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    padding: 0 0 0 8px;
-    margin: 0 16px 0 0;
-  }
-
-  > button {
+  form {
     display: flex;
     align-items: center;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    padding: 8px 16px;
-    border-radius: 8px;
-    color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
 
-    &:hover {
-      filter: saturate(0.8);
+    .input-new-card {
+      height: 40px;
+      width: 250px;
+      border-radius: 8px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      padding: 0 0 0 8px;
+      margin: 0 16px 0 0;
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 8px 16px;
+      border-radius: 8px;
+      color: rgba(0, 0, 0, 0.5);
+
+      &:hover {
+        filter: saturate(0.8);
+      }
     }
   }
 `;

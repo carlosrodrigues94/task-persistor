@@ -2,6 +2,11 @@ import styled from "styled-components";
 import { colors } from "../../../styles/colors";
 
 export const Content = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+
   .input-new-task {
     height: 40px;
     width: 250px;

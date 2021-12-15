@@ -35,6 +35,15 @@ export const Content = styled.div`
     border-radius: 4px 4px 0 0;
   }
 
+  .form-content-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 90%;
+    width: 100%;
+  }
+
   .div-modal-content-buttons {
     display: flex;
     align-items: center;
@@ -43,6 +52,7 @@ export const Content = styled.div`
     margin: auto 0 0 0;
     width: 100%;
     border-radius: 0 0 4px 4px;
+    padding: 0 0 8px 0;
     button {
       margin: 0 8px;
       border: 0;
