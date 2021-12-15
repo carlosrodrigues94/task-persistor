@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import { FaPowerOff } from "react-icons/fa";
+import { FiMinus } from "react-icons/fi";
 import { CardContext } from "../../contexts/card-context";
 import { TaskContext } from "../../contexts/task-context";
 import { colors } from "../../styles/colors";
@@ -40,6 +41,9 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <Container currentColor={currentColor}>
+      <button className="button-minimize-card" onClick={handleDeleteCard}>
+        <FiMinus />
+      </button>
       <button className="button-delete-card" onClick={handleDeleteCard}>
         <FaPowerOff />
       </button>
