@@ -2,6 +2,7 @@ import React, { ChangeEvent } from "react";
 import { FaCheckSquare, FaSquare } from "react-icons/fa";
 import { FiMinus, FiPlus } from "react-icons/fi";
 import { Task } from "../../types/task";
+import { formatCurrency } from "../../utils";
 
 import { Container, LabelInputCheckBox, DivContentButtons } from "./styles";
 
@@ -20,6 +21,16 @@ const TaskInputCheckbox: React.FC<TaskInputCheckboxProps> = ({
   onClickAddTask,
   currentColor,
 }) => {
+  const getTaskDescription = () => {
+    const { description, amount, isCalculator } = task;
+
+    if (isCalculator) {
+      const value = formatCurrency(String(amount / 100));
+      return `${description} ${value}`;
+    }
+
+    return `${task.description}`;
+  };
   return (
     <Container>
       <LabelInputCheckBox
@@ -40,7 +51,7 @@ const TaskInputCheckbox: React.FC<TaskInputCheckboxProps> = ({
           name="input-task"
           id={task.id}
         />
-        <span>{task.description}</span>
+        <span>{getTaskDescription()}</span>
       </LabelInputCheckBox>
       <DivContentButtons currentColor={currentColor}>
         <button type="button" onClick={() => onClickDeleteTask(task.id)}>

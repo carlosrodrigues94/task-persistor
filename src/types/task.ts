@@ -4,4 +4,6 @@ export type Task = {
   isCompleted: boolean;
   position: number;
   cardId: string;
+  amount: number;
+  isCalculator: boolean;
 };

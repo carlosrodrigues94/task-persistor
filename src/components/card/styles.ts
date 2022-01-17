@@ -19,6 +19,7 @@ export const Container = styled.div<ContainerProps>`
   transition: all 0.3s;
   position: relative;
   margin: 16px;
+  z-index: 0;
 
   div + label {
     margin-top: 40px;
