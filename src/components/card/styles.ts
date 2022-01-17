@@ -21,11 +21,16 @@ export const Container = styled.div<ContainerProps>`
   margin: 16px;
   z-index: 0;
 
+  #a-download-json {
+    display: none;
+  }
+
   div + label {
     margin-top: 40px;
   }
 
-  .button-minimize-card {
+  .button-minimize-card,
+  .button-download-card {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -44,6 +49,14 @@ export const Container = styled.div<ContainerProps>`
     &:hover {
       transform: none;
       background: ${colors.yellow};
+    }
+  }
+
+  .button-download-card {
+    right: 46px;
+    &:hover {
+      transform: none;
+      background: ${colors.cyan};
     }
   }
 

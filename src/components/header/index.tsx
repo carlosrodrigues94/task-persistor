@@ -17,7 +17,13 @@ const Header: React.FC = () => {
 
     setCards([
       ...cards,
-      { color: colors.blue, id: uuid(), title: inputValue, isCalculator },
+      {
+        color: colors.blue,
+        id: uuid(),
+        title: inputValue,
+        isCalculator,
+        createdAt: new Date(),
+      },
     ]);
 
     setInputValue("");
