@@ -5,6 +5,7 @@ export type ICard = {
   id: string;
   color: string;
   title: string;
+  isCalculator: boolean;
 };
 
 export type SetCardColorProps = { cardId: string; color: string };

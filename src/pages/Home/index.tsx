@@ -12,12 +12,14 @@ import { ModalAddNewTask } from "../../components/modals/modal-add-new-task";
 import "react-circular-progressbar/dist/styles.css";
 import { TaskContext } from "../../contexts/task-context";
 import { CardContext, SetCardColorProps } from "../../contexts/card-context";
+import { ModalAddNewTaskCalculator } from "../../components/modals/modal-add-new-task-calculator";
 
 export const Home: React.FC = () => {
   const { tasks, setTasks } = useContext(TaskContext);
   const { cards, setCardColor } = useContext(CardContext);
 
   const [showModalAddNewTask, setShowModalAddNewTask] = useState(false);
+  const [showModalAddNewCalcTask, setShowModalAddNewCalcTask] = useState(false);
   const [newTaskPosition, setNewTaskPosition] = useState(0);
   const [newTaskCardId, setNewTaskCardId] = useState("");
 
@@ -48,6 +50,8 @@ export const Home: React.FC = () => {
         isCompleted: false,
         position: newTaskPosition,
         cardId: newTaskCardId,
+        amount: 0,
+        isCalculator: false,
       },
     ]);
     setShowModalAddNewTask(false);
@@ -55,10 +59,38 @@ export const Home: React.FC = () => {
     setNewTaskPosition(0);
   }
 
+  function handleConfirmAddNewCalcTask(data: {
+    value: string;
+    description: string;
+  }) {
+    const value = Number(data.value.replace(/\D/g, ""));
+
+    setTasks([
+      ...tasks,
+      {
+        description: data.description,
+        id: uuid(),
+        isCompleted: false,
+        position: newTaskPosition,
+        cardId: newTaskCardId,
+        amount: value * 100,
+        isCalculator: true,
+      },
+    ]);
+    setShowModalAddNewCalcTask(false);
+    setNewTaskCardId("");
+    setNewTaskPosition(0);
+  }
+
   const handleClickAddNewTask = useCallback(
-    (data: { taskPosition: number; cardId: string }) => {
+    (data: { taskPosition: number; cardId: string; isCalculator: boolean }) => {
       setNewTaskPosition(data.taskPosition);
       setNewTaskCardId(data.cardId);
+
+      if (data.isCalculator) {
+        setShowModalAddNewCalcTask(true);
+        return;
+      }
       setShowModalAddNewTask(true);
     },
     []
@@ -82,8 +114,17 @@ export const Home: React.FC = () => {
         }}
       />
 
+      <ModalAddNewTaskCalculator
+        isOpen={showModalAddNewCalcTask}
+        onClickConfirm={handleConfirmAddNewCalcTask}
+        onClickCancel={() => {
+          setShowModalAddNewCalcTask(false);
+        }}
+      />
+
       {cards.map((card) => (
         <Card
+          isCalculator={card.isCalculator}
           cardId={card.id}
           currentColor={card.color}
           onClickColor={(color) =>
@@ -91,7 +132,11 @@ export const Home: React.FC = () => {
           }
           progress={getCardProgress({ cardId: card.id })}
           onClickAddNewTask={() =>
-            handleClickAddNewTask({ cardId: card.id, taskPosition: 1 })
+            handleClickAddNewTask({
+              cardId: card.id,
+              taskPosition: 1,
+              isCalculator: card.isCalculator,
+            })
           }
           title={card.title}
         >
@@ -103,7 +148,13 @@ export const Home: React.FC = () => {
                 task={task}
                 currentColor={card.color}
                 onCheckInput={handleClickCheckTask}
-                onClickAddTask={handleClickAddNewTask}
+                onClickAddTask={({ cardId, taskPosition }) =>
+                  handleClickAddNewTask({
+                    taskPosition,
+                    cardId,
+                    isCalculator: card.isCalculator,
+                  })
+                }
                 onClickDeleteTask={handleClickDeleteTask}
               />
             ))}

@@ -5,6 +5,7 @@ import { FiMinus } from "react-icons/fi";
 import { CardContext } from "../../contexts/card-context";
 import { TaskContext } from "../../contexts/task-context";
 import { colors } from "../../styles/colors";
+import { formatCurrency } from "../../utils";
 
 import {
   Container,
@@ -20,6 +21,7 @@ interface CardProps {
   title: string;
   onClickAddNewTask: () => void;
   cardId: string;
+  isCalculator: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -30,6 +32,7 @@ const Card: React.FC<CardProps> = ({
   title,
   onClickAddNewTask,
   cardId,
+  isCalculator,
 }) => {
   const { tasks, deleteCardTasks } = useContext(TaskContext);
   const { deleteCard } = useContext(CardContext);
@@ -38,6 +41,36 @@ const Card: React.FC<CardProps> = ({
     deleteCard(cardId);
     deleteCardTasks(cardId);
   }
+
+  const getProgressValue = () => {
+    console.log("é calc", isCalculator);
+    if (!isCalculator) {
+      return `${progress ? progress.toFixed(0) : 0}%`;
+    }
+
+    const filtered = tasks
+      .filter((task) => task.cardId === cardId)
+      .filter((task) => task.isCompleted);
+
+    const hasNotAmount = filtered.some((task) => task.amount === undefined);
+
+    if (hasNotAmount) {
+      return `${progress ? progress.toFixed(0) : 0}%`;
+    }
+
+    const { amount } = filtered.reduce(
+      (prev, curr) => {
+        const value = prev.amount + curr.amount;
+
+        return { ...prev, amount: value };
+      },
+      { amount: 0 }
+    );
+
+    console.log("TOTAL: ", amount);
+
+    return `${formatCurrency(String(amount / 100))}`;
+  };
 
   return (
     <Container currentColor={currentColor}>
@@ -62,9 +95,10 @@ const Card: React.FC<CardProps> = ({
           styles={buildStyles({
             pathColor: currentColor,
             textColor: currentColor,
+            textSize: isCalculator ? 14 : 18,
           })}
           value={progress}
-          text={`${progress ? progress.toFixed(0) : 0}%`}
+          text={getProgressValue()}
         />
       </ProgressContent>
 
