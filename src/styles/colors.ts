@@ -1,4 +1,15 @@
-export const colors: Record<string, string> = {
+type Key =
+  | "blue"
+  | "purple"
+  | "red"
+  | "orange"
+  | "cyan"
+  | "green"
+  | "yellow"
+  | "pink"
+  | string;
+
+export const colors: Record<Key, string> = {
   blue: "#2e86de",
   purple: "#8e44ad",
   red: "#ff6b6b",

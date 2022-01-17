@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import { FaPowerOff } from "react-icons/fa";
-import { FiMinus } from "react-icons/fi";
+import { FiArrowDown, FiMinus } from "react-icons/fi";
 import { CardContext } from "../../contexts/card-context";
 import { TaskContext } from "../../contexts/task-context";
 import { colors } from "../../styles/colors";
@@ -35,7 +35,7 @@ const Card: React.FC<CardProps> = ({
   isCalculator,
 }) => {
   const { tasks, deleteCardTasks } = useContext(TaskContext);
-  const { deleteCard } = useContext(CardContext);
+  const { deleteCard, handleDownloadCardData } = useContext(CardContext);
 
   function handleDeleteCard() {
     deleteCard(cardId);
@@ -74,7 +74,20 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <Container currentColor={currentColor}>
-      <button className="button-minimize-card" onClick={handleDeleteCard}>
+      <a href="/" id="a-download-json">
+        json
+      </a>
+      <button
+        className="button-download-card"
+        onClick={() =>
+          handleDownloadCardData({
+            cardId,
+          })
+        }
+      >
+        <FiArrowDown />
+      </button>
+      <button className="button-minimize-card" onClick={() => {}}>
         <FiMinus />
       </button>
       <button className="button-delete-card" onClick={handleDeleteCard}>
