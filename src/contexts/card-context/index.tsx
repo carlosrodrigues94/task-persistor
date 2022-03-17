@@ -71,6 +71,8 @@ export const CardContextProvider: React.FC = ({ children }) => {
       element.setAttribute("href", elementData);
       element.setAttribute("download", `card-${card.id}-${cardDate}.json`);
       element.click();
+
+      console.log("a");
     },
     [cards, tasks]
   );
