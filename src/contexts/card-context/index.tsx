@@ -73,6 +73,9 @@ export const CardContextProvider: React.FC = ({ children }) => {
       element.click();
 
       console.log("a");
+      console.log("new-page");
+
+      console.log("alter new button");
     },
     [cards, tasks]
   );
