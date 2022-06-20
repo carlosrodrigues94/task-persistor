@@ -1,7 +1,14 @@
-import { TaskContextProvider } from "./task-context";
-import { CardContextProvider } from "./card-context";
+import { TaskContextProvider } from "@/contexts/task-context";
+import { CardContextProvider } from "@/contexts/card-context";
+import { ReactNode } from "react";
 
-export const ContextProvider: React.FC = ({ children }) => {
+export type ContextProviderProps = {
+  children: ReactNode;
+};
+
+export const ContextProvider: React.FC<ContextProviderProps> = ({
+  children,
+}) => {
   return (
     <>
       <CardContextProvider>

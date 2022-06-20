@@ -1,4 +1,4 @@
-import React, { createContext, useCallback } from "react";
+import React, { createContext, ReactNode, useCallback } from "react";
 import useStateStorage from "../../hooks/use-state-storage";
 import { Task } from "../../types/task";
 
@@ -20,9 +20,15 @@ export type CardContextProps = {
   handleDownloadCardData: (data: { cardId: string }) => void;
 };
 
+export type CardContextProviderProps = {
+  children: ReactNode;
+};
+
 export const CardContext = createContext({} as CardContextProps);
 
-export const CardContextProvider: React.FC = ({ children }) => {
+export const CardContextProvider: React.FC<CardContextProviderProps> = ({
+  children,
+}) => {
   const [cards, setCards] = useStateStorage<ICard[]>([], "@cards");
   const [tasks] = useStateStorage<Task[]>([], "@tasks");
 

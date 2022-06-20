@@ -1,11 +1,14 @@
 import React, { FormEvent, useContext, useState } from "react";
-import { CardContext } from "../../contexts/card-context";
-import { colors } from "../../styles/colors";
-import { v4 as uuid } from "uuid";
+import { CardContext } from "@/contexts/card-context";
+import { colors } from "@/styles/colors";
+import { randomUUID as uuid } from "crypto";
 import { Container, ButtonEnableCalc } from "./styles";
 import { FaDollarSign } from "react-icons/fa";
+import { useCloudStorage } from "@/hooks/use-cloud-storage";
+import { getData, writeUserData } from "@/services/firebase";
 
 const Header: React.FC = () => {
+  const { signIn } = useCloudStorage();
   const { cards, setCards } = useContext(CardContext);
   const [inputValue, setInputValue] = useState("");
   const [isCalculator, setIsCalculator] = useState(false);
@@ -48,6 +51,29 @@ const Header: React.FC = () => {
         </ButtonEnableCalc>
         <button type="submit">Adicionar Card</button>
       </form>
+
+      <button type="button" onClick={signIn}>
+        Logar
+      </button>
+
+      <button
+        type="button"
+        onClick={() =>
+          writeUserData("id-card", {
+            color: colors.blue,
+            createdAt: new Date(),
+            id: "iasdaisd",
+            isCalculator: true,
+            title: "teste",
+          })
+        }
+      >
+        gravar
+      </button>
+
+      <button type="button" onClick={() => getData()}>
+        ler
+      </button>
     </Container>
   );
 };
