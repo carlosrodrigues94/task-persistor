@@ -1,10 +1,11 @@
-import React, { useContext } from "react";
+import Link from "next/link";
+import React, { ReactNode, useContext } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import { FaPowerOff } from "react-icons/fa";
 import { FiArrowDown, FiMinus } from "react-icons/fi";
 import { CardContext } from "../../contexts/card-context";
 import { TaskContext } from "../../contexts/task-context";
-import { colors } from "../../styles/colors";
+import { ColorKey, colors } from "../../styles/colors";
 import { formatCurrency } from "../../utils";
 
 import {
@@ -22,6 +23,7 @@ interface CardProps {
   onClickAddNewTask: () => void;
   cardId: string;
   isCalculator: boolean;
+  children: ReactNode;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -74,9 +76,9 @@ const Card: React.FC<CardProps> = ({
 
   return (
     <Container currentColor={currentColor}>
-      <a href="/" id="a-download-json">
-        json
-      </a>
+      <Link href="/">
+        <a id="a-download-json">json</a>
+      </Link>
       <button
         className="button-download-card"
         onClick={() =>
@@ -94,13 +96,18 @@ const Card: React.FC<CardProps> = ({
         <FaPowerOff />
       </button>
       <CardHeader>
-        {Object.keys(colors).map((key) => (
-          <button
-            type="button"
-            onClick={() => onClickColor(colors[key])}
-            style={{ backgroundColor: colors[key] }}
-          />
-        ))}
+        {Object.keys(colors).map((key) => {
+          const colorKey = key as ColorKey;
+
+          return (
+            <button
+              key={key}
+              type="button"
+              onClick={() => onClickColor(colors[colorKey])}
+              style={{ backgroundColor: colors[colorKey] }}
+            />
+          );
+        })}
       </CardHeader>
       <ProgressContent>
         <CircularProgressbar

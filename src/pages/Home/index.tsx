@@ -1,20 +1,20 @@
 import React, { ChangeEvent, useCallback, useContext, useState } from "react";
 
-import { v4 as uuid } from "uuid";
+import { randomUUID as uuid } from "crypto";
 
-import { Container } from "./styles";
+import { Container } from "@/styles/home";
 
-import { Card } from "../../components/card";
+import { Card } from "@/components/card";
 
-import TaskInputCheckbox from "../../components/task-input-checkbox";
-import { ModalAddNewTask } from "../../components/modals/modal-add-new-task";
+import TaskInputCheckbox from "@/components/task-input-checkbox";
+import { ModalAddNewTask } from "@/components/modals/modal-add-new-task";
 
 import "react-circular-progressbar/dist/styles.css";
-import { TaskContext } from "../../contexts/task-context";
-import { CardContext, SetCardColorProps } from "../../contexts/card-context";
-import { ModalAddNewTaskCalculator } from "../../components/modals/modal-add-new-task-calculator";
+import { TaskContext } from "@/contexts/task-context";
+import { CardContext, SetCardColorProps } from "@/contexts/card-context";
+import { ModalAddNewTaskCalculator } from "@/components/modals/modal-add-new-task-calculator";
 
-export const Home: React.FC = () => {
+export default function Home() {
   const { tasks, setTasks } = useContext(TaskContext);
   const { cards, setCardColor } = useContext(CardContext);
 
@@ -124,6 +124,7 @@ export const Home: React.FC = () => {
 
       {cards.map((card) => (
         <Card
+          key={card.id}
           isCalculator={card.isCalculator}
           cardId={card.id}
           currentColor={card.color}
@@ -146,6 +147,7 @@ export const Home: React.FC = () => {
             .map((task) => (
               <TaskInputCheckbox
                 task={task}
+                key={task.id}
                 currentColor={card.color}
                 onCheckInput={handleClickCheckTask}
                 onClickAddTask={({ cardId, taskPosition }) =>
@@ -162,4 +164,4 @@ export const Home: React.FC = () => {
       ))}
     </Container>
   );
-};
+}

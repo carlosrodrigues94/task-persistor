@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, ReactNode } from "react";
 import useStateStorage from "../../hooks/use-state-storage";
 import { Task } from "../../types/task";
 
@@ -8,11 +8,17 @@ export type TaskContextProps = {
   deleteCardTasks: (cardId: string) => void;
 };
 
+export type TaskContextProviderProps = {
+  children: ReactNode;
+};
+
 export const TaskContext = createContext<TaskContextProps>(
   {} as TaskContextProps
 );
 
-export const TaskContextProvider: React.FC = ({ children }) => {
+export const TaskContextProvider: React.FC<TaskContextProviderProps> = ({
+  children,
+}) => {
   const [tasks, setTasks] = useStateStorage<Task[]>([], "@tasks");
 
   function handleDeleteCardTasks(cardId: string) {
