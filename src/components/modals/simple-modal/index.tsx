@@ -1,4 +1,5 @@
 import React, { FormEvent, useCallback } from "react";
+import { ReactNode } from "react";
 
 import { Container, Content } from "./styles";
 
@@ -9,6 +10,7 @@ export type SimpleModalProps = {
   onSubmit?: () => void;
   headerText: string;
   typeButton: "button" | "submit";
+  children: ReactNode;
 };
 
 const SimpleModal: React.FC<SimpleModalProps> = ({
