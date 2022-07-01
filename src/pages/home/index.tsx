@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
 
 import { Container } from "./styles";
 
@@ -15,7 +15,7 @@ import { NoCards } from "@/components/no-cards";
 import { useAuth } from "@/hooks/use-auth";
 import { logo } from "@/assets";
 
-export function Home() {
+export const Home: FC = () => {
   const { isAuthenticated } = useAuth();
   const { handleSetCardColor } = useCardsUpdate();
   const { cards, handleRefreshCardsList } = useCardsList();
@@ -164,4 +164,4 @@ export function Home() {
       ))}
     </Container>
   );
-}
+};
