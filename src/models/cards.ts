@@ -1,5 +1,5 @@
 import { Collections } from "@/constants/collections";
-import { ICard } from "@/contexts/card-context";
+import { ICard } from "@/types/card";
 import { database } from "@/services/firebase";
 import { DataSnapshot, onValue, ref, set } from "firebase/database";
 import { CardsIdsModel } from "@/models/cards-ids";

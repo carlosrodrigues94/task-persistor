@@ -2,7 +2,7 @@ import { ICard } from "@/types/card";
 import { database } from "@/services/firebase";
 import { authState } from "@/state/auth/atoms";
 import { cardsListState } from "@/state/cards/list/atoms";
-import { Task } from "@/types/task";
+import { ITask } from "@/types/task";
 import { v4 as uuid } from "uuid";
 import { ref, update } from "firebase/database";
 import {
@@ -18,13 +18,13 @@ export const useTasksCreate = () => {
 
   const handleCreateTask = async (data: {
     cardId: string;
-    task: Omit<Task, "cardId" | "id">;
+    task: Omit<ITask, "cardId" | "id">;
   }) => {
     const card = cards.find((item) => item.id === data.cardId);
 
     if (!card) return;
 
-    const newTask: Task = {
+    const newTask: ITask = {
       id: uuid(),
       cardId: card.id,
       ...data.task,
