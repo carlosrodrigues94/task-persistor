@@ -1,39 +1,45 @@
-import React, { FormEvent, useContext, useState } from "react";
-import { CardContext } from "@/contexts/card-context";
+import React, { FormEvent, useEffect, useState } from "react";
 import { colors } from "@/styles/colors";
-import { randomUUID as uuid } from "crypto";
-import { Container, ButtonEnableCalc } from "./styles";
+import { Container, ButtonEnableCalc, AvatarContainer } from "./styles";
 import { FaDollarSign } from "react-icons/fa";
-import { useCloudStorage } from "@/hooks/use-cloud-storage";
-import { getData, writeUserData } from "@/services/firebase";
+import { useAuth } from "@/hooks/use-auth";
+import { useCardsCreate, CreateCardProps } from "@/hooks/cards";
 
 const Header: React.FC = () => {
-  const { signIn } = useCloudStorage();
-  const { cards, setCards } = useContext(CardContext);
+  const { handleSignIn, user } = useAuth();
+
   const [inputValue, setInputValue] = useState("");
   const [isCalculator, setIsCalculator] = useState(false);
+  const { handleCreateCard } = useCardsCreate();
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
     if (!inputValue) return;
 
-    setCards([
-      ...cards,
-      {
-        color: colors.blue,
-        id: uuid(),
-        title: inputValue,
-        isCalculator,
-        createdAt: new Date(),
-      },
-    ]);
+    const data: CreateCardProps = {
+      color: colors.blue,
+      title: inputValue,
+      isCalculator,
+      tasks: [],
+    };
+
+    handleCreateCard(data);
 
     setInputValue("");
   }
 
+  useEffect(() => {
+    console.log(`user`, user);
+  }, []);
+
   return (
     <Container>
+      <AvatarContainer>
+        <img src={user.avatar} alt="avatar" />
+      </AvatarContainer>
+      <span>{user.userName}</span>
+
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -50,30 +56,10 @@ const Header: React.FC = () => {
           <FaDollarSign />
         </ButtonEnableCalc>
         <button type="submit">Adicionar Card</button>
+        <button type="button" onClick={handleSignIn}>
+          Logar
+        </button>
       </form>
-
-      <button type="button" onClick={signIn}>
-        Logar
-      </button>
-
-      <button
-        type="button"
-        onClick={() =>
-          writeUserData("id-card", {
-            color: colors.blue,
-            createdAt: new Date(),
-            id: "iasdaisd",
-            isCalculator: true,
-            title: "teste",
-          })
-        }
-      >
-        gravar
-      </button>
-
-      <button type="button" onClick={() => getData()}>
-        ler
-      </button>
     </Container>
   );
 };

@@ -1,4 +1,4 @@
-export type Task = {
+export type ITask = {
   description: string;
   id: string;
   isCompleted: boolean;

@@ -39,6 +39,19 @@ export const Container = styled.div`
         filter: saturate(0.8);
       }
     }
+
+    button[type="button"] {
+      display: flex;
+      align-items: center;
+      border: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 8px 16px;
+      border-radius: 8px;
+      color: rgba(0, 0, 0, 0.5);
+
+      &:hover {
+        filter: saturate(0.8);
+      }
+    }
   }
 `;
 
@@ -58,5 +71,23 @@ export const ButtonEnableCalc = styled.button<{ isCalculator: boolean }>`
     color: ${(props) => {
       return props.isCalculator ? colors.green : "rgba(0, 0, 0, 0.5)";
     }};
+  }
+`;
+
+export const AvatarContainer = styled.div`
+  display: flex;
+  border-radius: 32px;
+  border: 2px solid ${colors.blue};
+  margin: 0 8px;
+
+  img {
+    object-fit: contain;
+    width: 48px;
+    height: 48px;
+    border-radius: 32px;
+  }
+
+  img + span {
+    margin: 0 8px;
   }
 `;

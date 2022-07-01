@@ -1,10 +1,9 @@
-import Link from "next/link";
-import React, { ReactNode, useContext } from "react";
+import { useCardsDelete, useCardsDownload, useCardsList } from "@/hooks/cards";
+import { ITask } from "@/types/task";
+import React, { ReactNode, useMemo } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import { FaPowerOff } from "react-icons/fa";
 import { FiArrowDown, FiMinus } from "react-icons/fi";
-import { CardContext } from "../../contexts/card-context";
-import { TaskContext } from "../../contexts/task-context";
 import { ColorKey, colors } from "../../styles/colors";
 import { formatCurrency } from "../../utils";
 
@@ -36,16 +35,19 @@ const Card: React.FC<CardProps> = ({
   cardId,
   isCalculator,
 }) => {
-  const { tasks, deleteCardTasks } = useContext(TaskContext);
-  const { deleteCard, handleDownloadCardData } = useContext(CardContext);
+  const { handleDeleteCard } = useCardsDelete();
+  const { cards } = useCardsList();
+  const { handleDownloadCardData } = useCardsDownload();
 
-  function handleDeleteCard() {
-    deleteCard(cardId);
-    deleteCardTasks(cardId);
-  }
+  const tasks: ITask[] = useMemo(() => {
+    const card = cards.find((card) => card.id === cardId);
+
+    if (!card) return [];
+
+    return card.tasks;
+  }, [cards, cardId]);
 
   const getProgressValue = () => {
-    console.log("é calc", isCalculator);
     if (!isCalculator) {
       return `${progress ? progress.toFixed(0) : 0}%`;
     }
@@ -69,30 +71,29 @@ const Card: React.FC<CardProps> = ({
       { amount: 0 }
     );
 
-    console.log("TOTAL: ", amount);
-
     return `${formatCurrency(String(amount / 100))}`;
   };
 
   return (
     <Container currentColor={currentColor}>
-      <Link href="/">
-        <a id="a-download-json">json</a>
-      </Link>
+      <a href="/" id="a-download-json">
+        json
+      </a>
       <button
         className="button-download-card"
-        onClick={() =>
-          handleDownloadCardData({
-            cardId,
-          })
-        }
+        onClick={() => {
+          handleDownloadCardData({ cardId });
+        }}
       >
         <FiArrowDown />
       </button>
       <button className="button-minimize-card" onClick={() => {}}>
         <FiMinus />
       </button>
-      <button className="button-delete-card" onClick={handleDeleteCard}>
+      <button
+        className="button-delete-card"
+        onClick={() => handleDeleteCard(cardId)}
+      >
         <FaPowerOff />
       </button>
       <CardHeader>
