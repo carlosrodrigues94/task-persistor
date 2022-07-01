@@ -1,59 +1,50 @@
-import React, { ChangeEvent, useCallback, useContext, useState } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 
-import { randomUUID as uuid } from "crypto";
-
-import { Container } from "@/styles/home";
+import { Container } from "./styles";
 
 import { Card } from "@/components/card";
 
 import TaskInputCheckbox from "@/components/task-input-checkbox";
 import { ModalAddNewTask } from "@/components/modals/modal-add-new-task";
 
-import "react-circular-progressbar/dist/styles.css";
-import { TaskContext } from "@/contexts/task-context";
-import { CardContext, SetCardColorProps } from "@/contexts/card-context";
 import { ModalAddNewTaskCalculator } from "@/components/modals/modal-add-new-task-calculator";
+import { useCardsUpdate, useCardsList } from "@/hooks/cards";
+import { ITask } from "@/types/task";
+import { useTasksCreate, useTasksDelete, useTasksUpdate } from "@/hooks/tasks";
+import { NoCards } from "@/components/no-cards";
 
-export default function Home() {
-  const { tasks, setTasks } = useContext(TaskContext);
-  const { cards, setCardColor } = useContext(CardContext);
+export function Home() {
+  const { handleSetCardColor } = useCardsUpdate();
+  const { cards } = useCardsList();
+  const { handleChangeTaskCheck } = useTasksUpdate();
+  const { handleDeleteTask } = useTasksDelete();
+  const { handleCreateTask } = useTasksCreate();
 
   const [showModalAddNewTask, setShowModalAddNewTask] = useState(false);
   const [showModalAddNewCalcTask, setShowModalAddNewCalcTask] = useState(false);
   const [newTaskPosition, setNewTaskPosition] = useState(0);
   const [newTaskCardId, setNewTaskCardId] = useState("");
 
-  function handleClickCheckTask(event: ChangeEvent<HTMLInputElement>) {
+  function handleClickCheckTask(
+    event: ChangeEvent<HTMLInputElement>,
+    cardId: string
+  ) {
     const { checked, id } = event.target;
 
-    const tasksFiltered = tasks.filter((task) => task.id !== id);
-    const taskChecked = tasks.find((task) => task.id === id);
-    if (!taskChecked) return [...tasksFiltered];
-    setTasks([...tasksFiltered, { ...taskChecked, isCompleted: checked }]);
-  }
-
-  function handleChangeCardColor(data: SetCardColorProps) {
-    setCardColor(data);
-  }
-
-  function handleClickDeleteTask(taskId: string) {
-    const filtered = tasks.filter((task) => task.id !== taskId);
-    setTasks(filtered);
+    handleChangeTaskCheck({ cardId, isChecked: checked, taskId: id });
   }
 
   function handleConfirmAddNewTask(value: string) {
-    setTasks([
-      ...tasks,
-      {
+    handleCreateTask({
+      cardId: newTaskCardId,
+      task: {
+        amount: 0,
         description: value,
-        id: uuid(),
+        isCalculator: false,
         isCompleted: false,
         position: newTaskPosition,
-        cardId: newTaskCardId,
-        amount: 0,
-        isCalculator: false,
       },
-    ]);
+    });
     setShowModalAddNewTask(false);
     setNewTaskCardId("");
     setNewTaskPosition(0);
@@ -65,18 +56,16 @@ export default function Home() {
   }) {
     const value = Number(data.value.replace(/\D/g, ""));
 
-    setTasks([
-      ...tasks,
-      {
+    handleCreateTask({
+      cardId: newTaskCardId,
+      task: {
         description: data.description,
-        id: uuid(),
         isCompleted: false,
         position: newTaskPosition,
-        cardId: newTaskCardId,
         amount: value * 100,
         isCalculator: true,
       },
-    ]);
+    });
     setShowModalAddNewCalcTask(false);
     setNewTaskCardId("");
     setNewTaskPosition(0);
@@ -96,19 +85,19 @@ export default function Home() {
     []
   );
 
-  function getCardProgress(data: { cardId: string }) {
-    const cardTasks = tasks.filter((task) => task.cardId === data.cardId);
-    const completed = cardTasks.filter((task) => task.isCompleted);
+  function getCardProgress(data: { tasks: ITask[] }) {
+    const completed = data.tasks.filter((task) => task.isCompleted);
 
-    const progressCalc = (completed.length / cardTasks.length) * 100;
+    const progressCalc = (completed.length / data.tasks.length) * 100;
     return parseInt(progressCalc.toFixed(0));
   }
 
   return (
     <Container>
+      <NoCards />
       <ModalAddNewTask
         isOpen={showModalAddNewTask}
-        onClickConfirm={handleConfirmAddNewTask}
+        onClickConfirm={(value) => handleConfirmAddNewTask(value)}
         onClickCancel={() => {
           setShowModalAddNewTask(false);
         }}
@@ -129,9 +118,9 @@ export default function Home() {
           cardId={card.id}
           currentColor={card.color}
           onClickColor={(color) =>
-            handleChangeCardColor({ cardId: card.id, color })
+            handleSetCardColor({ cardId: card.id, color })
           }
-          progress={getCardProgress({ cardId: card.id })}
+          progress={getCardProgress({ tasks: card.tasks || [] })}
           onClickAddNewTask={() =>
             handleClickAddNewTask({
               cardId: card.id,
@@ -141,7 +130,7 @@ export default function Home() {
           }
           title={card.title}
         >
-          {tasks
+          {card.tasks
             .filter((task) => task.cardId === card.id)
             .sort((a, b) => (a.position < b.position ? -1 : 1))
             .map((task) => (
@@ -149,15 +138,17 @@ export default function Home() {
                 task={task}
                 key={task.id}
                 currentColor={card.color}
-                onCheckInput={handleClickCheckTask}
-                onClickAddTask={({ cardId, taskPosition }) =>
+                onCheckInput={(event) => handleClickCheckTask(event, card.id)}
+                onClickAddTask={({ cardId, taskPosition }) => {
                   handleClickAddNewTask({
                     taskPosition,
                     cardId,
                     isCalculator: card.isCalculator,
-                  })
+                  });
+                }}
+                onClickDeleteTask={() =>
+                  handleDeleteTask({ cardId: card.id, taskId: task.id })
                 }
-                onClickDeleteTask={handleClickDeleteTask}
               />
             ))}
         </Card>
