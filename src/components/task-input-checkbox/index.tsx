@@ -1,13 +1,13 @@
 import React, { ChangeEvent } from "react";
 import { FaCheckSquare, FaSquare } from "react-icons/fa";
 import { FiMinus, FiPlus } from "react-icons/fi";
-import { Task } from "../../types/task";
-import { formatCurrency } from "../../utils";
+import { ITask } from "@/types/task";
+import { formatCurrency } from "@/utils";
 
 import { Container, LabelInputCheckBox, DivContentButtons } from "./styles";
 
 type TaskInputCheckboxProps = {
-  task: Task;
+  task: ITask;
   onCheckInput: (event: ChangeEvent<HTMLInputElement>) => void;
   onClickDeleteTask: (taskId: string) => void;
   onClickAddTask: (data: { taskPosition: number; cardId: string }) => void;
