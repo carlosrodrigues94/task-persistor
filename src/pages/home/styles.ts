@@ -9,4 +9,8 @@ export const Container = styled.div`
   background: #f5f6fa;
   flex-wrap: wrap;
   padding-bottom: 50px;
+
+  #img-logo {
+    margin: auto 0;
+  }
 `;

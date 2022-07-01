@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 
 import { Container } from "./styles";
 
@@ -12,10 +12,13 @@ import { useCardsUpdate, useCardsList } from "@/hooks/cards";
 import { ITask } from "@/types/task";
 import { useTasksCreate, useTasksDelete, useTasksUpdate } from "@/hooks/tasks";
 import { NoCards } from "@/components/no-cards";
+import { useAuth } from "@/hooks/use-auth";
+import { logo } from "@/assets";
 
 export function Home() {
+  const { isAuthenticated } = useAuth();
   const { handleSetCardColor } = useCardsUpdate();
-  const { cards } = useCardsList();
+  const { cards, handleRefreshCardsList } = useCardsList();
   const { handleChangeTaskCheck } = useTasksUpdate();
   const { handleDeleteTask } = useTasksDelete();
   const { handleCreateTask } = useTasksCreate();
@@ -92,9 +95,14 @@ export function Home() {
     return parseInt(progressCalc.toFixed(0));
   }
 
+  useEffect(() => {
+    handleRefreshCardsList();
+  }, [handleRefreshCardsList]);
+
   return (
     <Container>
       <NoCards />
+      {!isAuthenticated && <img id="img-logo" src={logo} alt="logo" />}
       <ModalAddNewTask
         isOpen={showModalAddNewTask}
         onClickConfirm={(value) => handleConfirmAddNewTask(value)}
