@@ -9,7 +9,6 @@ export const CardsModel = {
     const starCountRef = ref(database, `${Collections.CARDS}/${cardId}`);
     onValue(starCountRef, (snapshot: DataSnapshot) => {
       const data = snapshot.val();
-      console.log("DATA", data);
     });
   },
   storeCard: async (userId: string, card: ICard) => {
