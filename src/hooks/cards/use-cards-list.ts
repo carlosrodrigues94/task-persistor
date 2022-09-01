@@ -1,5 +1,5 @@
 import { cardsListState } from "@/state/cards/list/atoms";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import {
   useRecoilRefresher_UNSTABLE as useRecoilRefresher,
   useRecoilValue,
@@ -10,6 +10,10 @@ export const useCardsList = () => {
   const refresh = useRecoilRefresher(cardsListState);
 
   const handleRefreshCardsList = useCallback(() => {
+    refresh();
+  }, [refresh]);
+
+  useEffect(() => {
     refresh();
   }, [refresh]);
 

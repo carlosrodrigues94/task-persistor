@@ -47,8 +47,6 @@ export const cardsListState = selector({
         }));
       });
 
-      console.log("CARDS INSIDE RECOIL", cards);
-
       return cards;
     } catch (err) {
       const error = err as Record<string, string>;

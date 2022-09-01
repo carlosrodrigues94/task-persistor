@@ -97,6 +97,10 @@ export const Container = styled.div<ContainerProps>`
     bottom: 0;
     width: 100%;
   }
+
+  .switch {
+    margin-left: auto;
+  }
 `;
 
 export const CardHeader = styled.header`

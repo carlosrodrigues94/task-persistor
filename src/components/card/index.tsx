@@ -1,11 +1,17 @@
-import { useCardsDelete, useCardsDownload, useCardsList } from "@/hooks/cards";
+import {
+  useCardsDelete,
+  useCardsDownload,
+  useCardsList,
+  useCardsUpdate,
+} from "@/hooks/cards";
 import { ITask } from "@/types/task";
 import React, { ReactNode, useMemo } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import { FaPowerOff } from "react-icons/fa";
-import { FiArrowDown, FiMinus } from "react-icons/fi";
+import { FiArrowDown, FiMinus, FiPlus } from "react-icons/fi";
 import { ColorKey, colors } from "../../styles/colors";
 import { formatCurrency } from "../../utils";
+import Switch from "react-switch";
 
 import {
   Container,
@@ -13,6 +19,8 @@ import {
   ProgressContent,
   DivContentAddNewTask,
 } from "./styles";
+import { ICard } from "@/types/card";
+import { lighten } from "polished";
 
 interface CardProps {
   currentColor: string;
@@ -38,6 +46,15 @@ const Card: React.FC<CardProps> = ({
   const { handleDeleteCard } = useCardsDelete();
   const { cards } = useCardsList();
   const { handleDownloadCardData } = useCardsDownload();
+  const { handleChangeProgressCalculatorType } = useCardsUpdate();
+
+  const currentCard = useMemo(() => {
+    const card = cards.find((card) => card.id === cardId);
+
+    if (!card) return { progressCalculatorIncremental: false } as ICard;
+
+    return card;
+  }, [cardId]);
 
   const tasks: ITask[] = useMemo(() => {
     const card = cards.find((card) => card.id === cardId);
@@ -64,9 +81,11 @@ const Card: React.FC<CardProps> = ({
 
     const { amount } = filtered.reduce(
       (prev, curr) => {
-        const value = prev.amount + curr.amount;
+        if (currentCard.progressCalculatorIncremental) {
+          return { ...prev, amount: prev.amount + curr.amount };
+        }
 
-        return { ...prev, amount: value };
+        return { ...prev, amount: prev.amount - curr.amount };
       },
       { amount: 0 }
     );
@@ -122,6 +141,25 @@ const Card: React.FC<CardProps> = ({
           text={getProgressValue()}
         />
       </ProgressContent>
+      <Switch
+        className="switch"
+        checked={currentCard.progressCalculatorIncremental}
+        onChange={({ valueOf }) =>
+          handleChangeProgressCalculatorType({
+            value: valueOf(),
+            cardId: cardId,
+          })
+        }
+        height={18}
+        handleDiameter={22}
+        onHandleColor={currentColor}
+        offHandleColor={currentColor}
+        checkedIcon={false}
+        uncheckedIcon={false}
+        onColor={lighten(0.3, currentColor)}
+        offColor={"#dcdde1"}
+        width={42}
+      />
 
       <div className="card-title">
         <h4>{title}</h4>
