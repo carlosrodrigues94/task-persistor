@@ -21,6 +21,7 @@ const Header: React.FC = () => {
       color: colors.blue,
       title: inputValue,
       isCalculator,
+      progressCalculatorIncremental: true,
       tasks: [],
     };
 
