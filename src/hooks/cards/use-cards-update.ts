@@ -2,10 +2,8 @@ import { database } from "@/services/firebase";
 import { authState } from "@/state/auth/atoms";
 import { cardsListState } from "@/state/cards/list/atoms";
 import { loadingState } from "@/state/loading/atoms";
-import { ColorKey } from "@/styles/colors";
 import { ICard } from "@/types/card";
 import { ref, update } from "firebase/database";
-import { useCallback } from "react";
 import {
   useRecoilRefresher_UNSTABLE as useRecoilRefresher,
   useRecoilState,
@@ -44,7 +42,6 @@ export const useCardsUpdate = () => {
 
   const handleToggleProgressCalculatorType = async (data: {
     cardId: string;
-    value: boolean;
   }) => {
     setLoading(true);
     const card = cards.find((item) => item.id === data.cardId);
