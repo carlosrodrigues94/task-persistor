@@ -8,7 +8,7 @@ import { ITask } from "@/types/task";
 import React, { ReactNode, useMemo } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import { FaPowerOff } from "react-icons/fa";
-import { FiArrowDown, FiMinus, FiPlus } from "react-icons/fi";
+import { FiArrowDown, FiMinus } from "react-icons/fi";
 import { ColorKey, colors } from "../../styles/colors";
 import { formatCurrency } from "../../utils";
 import Switch from "react-switch";
@@ -19,7 +19,6 @@ import {
   ProgressContent,
   DivContentAddNewTask,
 } from "./styles";
-import { ICard } from "@/types/card";
 import { lighten } from "polished";
 
 interface CardProps {
@@ -31,6 +30,7 @@ interface CardProps {
   cardId: string;
   isCalculator: boolean;
   children: ReactNode;
+  progressCalculatorIncremental: boolean;
 }
 
 const Card: React.FC<CardProps> = ({
@@ -42,19 +42,12 @@ const Card: React.FC<CardProps> = ({
   onClickAddNewTask,
   cardId,
   isCalculator,
+  progressCalculatorIncremental = true,
 }) => {
   const { handleDeleteCard } = useCardsDelete();
   const { cards } = useCardsList();
   const { handleDownloadCardData } = useCardsDownload();
   const { handleToggleProgressCalculatorType } = useCardsUpdate();
-
-  const currentCard = useMemo(() => {
-    const card = cards.find((card) => card.id === cardId);
-
-    if (!card) return { progressCalculatorIncremental: false } as ICard;
-
-    return card;
-  }, [cardId]);
 
   const tasks: ITask[] = useMemo(() => {
     const card = cards.find((card) => card.id === cardId);
@@ -81,7 +74,7 @@ const Card: React.FC<CardProps> = ({
 
     const { amount } = filtered.reduce(
       (prev, curr) => {
-        if (currentCard.progressCalculatorIncremental) {
+        if (progressCalculatorIncremental) {
           return { ...prev, amount: prev.amount + curr.amount };
         }
 
@@ -143,7 +136,7 @@ const Card: React.FC<CardProps> = ({
       </ProgressContent>
       <Switch
         className="switch"
-        checked={currentCard.progressCalculatorIncremental}
+        checked={progressCalculatorIncremental}
         onChange={() => {
           handleToggleProgressCalculatorType({
             cardId: cardId,

@@ -121,13 +121,14 @@ export function Home() {
             handleSetCardColor({ cardId: card.id, color })
           }
           progress={getCardProgress({ tasks: card.tasks || [] })}
-          onClickAddNewTask={() =>
+          progressCalculatorIncremental={card.progressCalculatorIncremental}
+          onClickAddNewTask={() => {
             handleClickAddNewTask({
               cardId: card.id,
               taskPosition: 1,
               isCalculator: card.isCalculator,
-            })
-          }
+            });
+          }}
           title={card.title}
         >
           {card.tasks
