@@ -42,7 +42,7 @@ export const useCardsUpdate = () => {
     return;
   };
 
-  const handleChangeProgressCalculatorType = async (data: {
+  const handleToggleProgressCalculatorType = async (data: {
     cardId: string;
     value: boolean;
   }) => {
@@ -54,7 +54,7 @@ export const useCardsUpdate = () => {
     const updates: Record<string, ICard> = {
       [`cards/${data.cardId}`]: {
         ...card,
-        progressCalculatorIncremental: data.value,
+        progressCalculatorIncremental: !card.progressCalculatorIncremental,
       },
     };
 
@@ -69,6 +69,6 @@ export const useCardsUpdate = () => {
 
   return {
     handleSetCardColor,
-    handleChangeProgressCalculatorType,
+    handleToggleProgressCalculatorType,
   };
 };

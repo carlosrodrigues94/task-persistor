@@ -46,7 +46,7 @@ const Card: React.FC<CardProps> = ({
   const { handleDeleteCard } = useCardsDelete();
   const { cards } = useCardsList();
   const { handleDownloadCardData } = useCardsDownload();
-  const { handleChangeProgressCalculatorType } = useCardsUpdate();
+  const { handleToggleProgressCalculatorType } = useCardsUpdate();
 
   const currentCard = useMemo(() => {
     const card = cards.find((card) => card.id === cardId);
@@ -144,12 +144,11 @@ const Card: React.FC<CardProps> = ({
       <Switch
         className="switch"
         checked={currentCard.progressCalculatorIncremental}
-        onChange={({ valueOf }) =>
-          handleChangeProgressCalculatorType({
-            value: valueOf(),
+        onChange={() => {
+          handleToggleProgressCalculatorType({
             cardId: cardId,
-          })
-        }
+          });
+        }}
         height={18}
         handleDiameter={22}
         onHandleColor={currentColor}
