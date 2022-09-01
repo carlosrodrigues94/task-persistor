@@ -42,7 +42,33 @@ export const useCardsUpdate = () => {
     return;
   };
 
+  const handleChangeProgressCalculatorType = async (data: {
+    cardId: string;
+    value: boolean;
+  }) => {
+    setLoading(true);
+    const card = cards.find((item) => item.id === data.cardId);
+
+    if (!card) return;
+
+    const updates: Record<string, ICard> = {
+      [`cards/${data.cardId}`]: {
+        ...card,
+        progressCalculatorIncremental: data.value,
+      },
+    };
+
+    await update(ref(database), updates);
+
+    refresh();
+
+    setLoading(false);
+
+    return;
+  };
+
   return {
     handleSetCardColor,
+    handleChangeProgressCalculatorType,
   };
 };
