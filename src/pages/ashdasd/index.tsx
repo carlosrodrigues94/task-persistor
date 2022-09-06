@@ -15,7 +15,7 @@ import { NoCards } from "@/components/no-cards";
 import { useAuth } from "@/hooks/use-auth";
 import { logo } from "@/assets";
 
-export const Home: FC = () => {
+export const Dashboard: FC = () => {
   const { isAuthenticated } = useAuth();
   const { handleSetCardColor } = useCardsUpdate();
   const { cards, handleRefreshCardsList } = useCardsList();
