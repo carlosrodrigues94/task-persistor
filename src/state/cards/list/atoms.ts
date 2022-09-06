@@ -13,14 +13,13 @@ export const cardsListState = selector({
       const { id } = get(authState);
 
       if (!id) return [];
+
       const refCardsIds = ref(database, `user-cards-ids/${id}`);
 
       let cardsIds: string[] = [];
 
       onValue(refCardsIds, (snapshot) => {
         const data = snapshot.val();
-
-        console.log("CARDS IDS => ", data);
 
         if (!snapshot.val()) {
           cardsIds = [];
@@ -40,6 +39,7 @@ export const cardsListState = selector({
           return;
         }
         const data = snapshot.val() as Record<string, any>;
+
         cards = Object.entries(data).map(([key, value]) => ({
           id: key,
           tasks: value.tasks || [],

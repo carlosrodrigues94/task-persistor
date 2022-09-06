@@ -20,7 +20,6 @@ export const useCardsUpdate = () => {
     cardId: string;
     color: string;
   }) => {
-    setLoading(true);
     const card = cards.find((item) => item.id === data.cardId);
 
     if (!card) return;
@@ -30,6 +29,8 @@ export const useCardsUpdate = () => {
     const updates: Record<string, ICard> = {
       [`cards/${data.cardId}`]: { ...card, color: data.color },
     };
+
+    setLoading(true);
 
     await update(ref(database), updates);
 

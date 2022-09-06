@@ -1,13 +1,22 @@
 import React, { FormEvent, useEffect, useState } from "react";
-import { colors } from "@/styles/colors";
-import { Container, ButtonEnableCalc, AvatarContainer } from "./styles";
 import { FaDollarSign } from "react-icons/fa";
-import { useAuth } from "@/hooks/use-auth";
 import { useCardsCreate, CreateCardProps } from "@/hooks/cards";
+import { useAuth } from "@/hooks/use-auth";
+import { colors } from "@/styles/colors";
+import {
+  Container,
+  ButtonEnableCalc,
+  AvatarContainer,
+  ButtonAddCard,
+  Form,
+  UserName,
+  Button,
+  InputContainer,
+} from "./styles";
+import { FiLogOut, FiPlus } from "react-icons/fi";
 
 const Header: React.FC = () => {
-  const { handleSignIn, user } = useAuth();
-
+  const { handleSignIn, user, isAuthenticated, handleSignOut } = useAuth();
   const [inputValue, setInputValue] = useState("");
   const [isCalculator, setIsCalculator] = useState(false);
   const { handleCreateCard } = useCardsCreate();
@@ -30,37 +39,52 @@ const Header: React.FC = () => {
     setInputValue("");
   }
 
-  useEffect(() => {
-    console.log(`user`, user);
-  }, []);
-
   return (
     <Container>
-      <AvatarContainer>
-        <img src={user.avatar} alt="avatar" />
-      </AvatarContainer>
-      <span>{user.userName}</span>
+      {isAuthenticated && (
+        <>
+          <AvatarContainer>
+            <img src={user.avatar} alt="avatar" />
+          </AvatarContainer>
+          <UserName>{user.userName}</UserName>
+        </>
+      )}
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Título do Card"
-          className="input-new-card"
-          value={inputValue}
-          onChange={(event) => setInputValue(event.target.value)}
-        />
-        <ButtonEnableCalc
-          type="button"
-          onClick={() => setIsCalculator(!isCalculator)}
-          isCalculator={isCalculator}
-        >
-          <FaDollarSign />
-        </ButtonEnableCalc>
-        <button type="submit">Adicionar Card</button>
-        <button type="button" onClick={handleSignIn}>
-          Logar
-        </button>
-      </form>
+      {isAuthenticated && (
+        <Form onSubmit={handleSubmit}>
+          <InputContainer className="input-container">
+            <input
+              type="text"
+              placeholder="Card Title"
+              className="input-new-card"
+              value={inputValue}
+              onChange={(event) => setInputValue(event.target.value)}
+            />
+            <ButtonEnableCalc
+              type="button"
+              onClick={() => setIsCalculator(!isCalculator)}
+              isCalculator={isCalculator}
+            >
+              <FaDollarSign />
+            </ButtonEnableCalc>
+            <ButtonAddCard type="submit">
+              <FiPlus />
+            </ButtonAddCard>
+          </InputContainer>
+        </Form>
+      )}
+
+      {!isAuthenticated && (
+        <Button type="button" onClick={handleSignIn}>
+          Login
+        </Button>
+      )}
+
+      {isAuthenticated && (
+        <Button type="button" onClick={handleSignOut}>
+          <FiLogOut />
+        </Button>
+      )}
     </Container>
   );
 };
