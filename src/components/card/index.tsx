@@ -1,17 +1,19 @@
+import React, { ReactNode, useMemo } from "react";
+import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
+import Switch from "react-switch";
+import { FaPowerOff } from "react-icons/fa";
+import { FiArrowDown, FiMinus } from "react-icons/fi";
+
 import {
   useCardsDelete,
   useCardsDownload,
   useCardsList,
   useCardsUpdate,
 } from "@/hooks/cards";
+
 import { ITask } from "@/types/task";
-import React, { ReactNode, useMemo } from "react";
-import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
-import { FaPowerOff } from "react-icons/fa";
-import { FiArrowDown, FiMinus } from "react-icons/fi";
-import { ColorKey, colors } from "../../styles/colors";
-import { formatCurrency } from "../../utils";
-import Switch from "react-switch";
+import { ColorKey, colors } from "@/styles/colors";
+import { formatCurrency } from "@/utils";
 
 import {
   Container,
@@ -37,7 +39,7 @@ const Card: React.FC<CardProps> = ({
   children,
   currentColor,
   onClickColor,
-  progress,
+  progress: tasksProgress = 0,
   title,
   onClickAddNewTask,
   cardId,
@@ -49,6 +51,15 @@ const Card: React.FC<CardProps> = ({
   const { handleDownloadCardData } = useCardsDownload();
   const { handleToggleProgressCalculatorType } = useCardsUpdate();
 
+  const progress: number = useMemo(() => {
+    if (isCalculator || progressCalculatorIncremental) {
+      return tasksProgress;
+    }
+
+    const result = 100 - tasksProgress;
+    return result;
+  }, [tasksProgress, progressCalculatorIncremental, isCalculator]);
+
   const tasks: ITask[] = useMemo(() => {
     const card = cards.find((card) => card.id === cardId);
 
@@ -59,6 +70,11 @@ const Card: React.FC<CardProps> = ({
 
   const getProgressValue = () => {
     if (!isCalculator) {
+      // Progress starts on 100%
+      if (!progressCalculatorIncremental) {
+        return `${progress ? (100 - progress).toFixed(0) : 100}%`;
+      }
+
       return `${progress ? progress.toFixed(0) : 0}%`;
     }
 
@@ -74,14 +90,24 @@ const Card: React.FC<CardProps> = ({
 
     const { amount } = filtered.reduce(
       (prev, curr) => {
-        if (progressCalculatorIncremental) {
-          return { ...prev, amount: prev.amount + curr.amount };
-        }
-
         return { ...prev, amount: prev.amount - curr.amount };
       },
       { amount: 0 }
     );
+
+    if (progressCalculatorIncremental) {
+      const { amount } = tasks
+        .filter((task) => task.cardId === cardId)
+        .filter((task) => !task.isCompleted)
+        .reduce(
+          (prev, curr) => {
+            return { ...prev, amount: prev.amount + curr.amount };
+          },
+          { amount: 0 }
+        );
+
+      return `${formatCurrency(String(amount / 100))}`;
+    }
 
     return `${formatCurrency(String(amount / 100))}`;
   };
@@ -160,7 +186,7 @@ const Card: React.FC<CardProps> = ({
       {!tasks.filter((task) => task.cardId === cardId).length && (
         <DivContentAddNewTask currentColor={currentColor}>
           <button type="button" onClick={onClickAddNewTask}>
-            Adicionar nova Tarefa
+            Add new task
           </button>
         </DivContentAddNewTask>
       )}

@@ -11,3 +11,18 @@ export const Container = styled.div`
   padding: 8px;
   text-align: center;
 `;
+
+export const ButtonRefresh = styled.button`
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 8px 8px;
+  border-radius: 8px;
+  height: 40px;
+  color: rgba(0, 0, 0, 0.5);
+  margin: 8px 0;
+
+  &:hover {
+    filter: saturate(0.8);
+  }
+`;

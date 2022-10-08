@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { SimpleModal } from "../simple-modal";
+import { SimpleModal } from "@/components/modals/simple-modal";
 import { Content } from "./styles";
 
 interface ModalAddNewTaskProps {

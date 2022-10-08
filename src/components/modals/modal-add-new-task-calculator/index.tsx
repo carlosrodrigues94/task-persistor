@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { formatCurrency } from "../../../utils";
-import { SimpleModal } from "../simple-modal";
+import { formatCurrency } from "@/utils";
+import { SimpleModal } from "@/components/modals/simple-modal";
 import { Content } from "./styles";
 
 interface ModalAddNewTaskCalculatorProps {
