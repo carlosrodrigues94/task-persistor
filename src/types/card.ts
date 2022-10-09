@@ -6,6 +6,7 @@ export type ICard = {
   title: string;
   isCalculator: boolean;
   progressCalculatorIncremental: boolean;
+  isHidden: boolean;
   tasks: ITask[];
   createdAt: Date;
 };

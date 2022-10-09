@@ -119,49 +119,51 @@ export const Dashboard: FC = () => {
         }}
       />
 
-      {cards.map((card) => (
-        <Card
-          key={card.id}
-          isCalculator={card.isCalculator}
-          cardId={card.id}
-          currentColor={card.color}
-          onClickColor={(color) =>
-            handleSetCardColor({ cardId: card.id, color })
-          }
-          progress={getCardProgress({ tasks: card.tasks || [] })}
-          progressCalculatorIncremental={card.progressCalculatorIncremental}
-          onClickAddNewTask={() => {
-            handleClickAddNewTask({
-              cardId: card.id,
-              taskPosition: 1,
-              isCalculator: card.isCalculator,
-            });
-          }}
-          title={card.title}
-        >
-          {card.tasks
-            .filter((task) => task.cardId === card.id)
-            .sort((a, b) => (a.position < b.position ? -1 : 1))
-            .map((task) => (
-              <TaskInputCheckbox
-                task={task}
-                key={task.id}
-                currentColor={card.color}
-                onCheckInput={(event) => handleClickCheckTask(event, card.id)}
-                onClickAddTask={({ cardId, taskPosition }) => {
-                  handleClickAddNewTask({
-                    taskPosition,
-                    cardId,
-                    isCalculator: card.isCalculator,
-                  });
-                }}
-                onClickDeleteTask={() =>
-                  handleDeleteTask({ cardId: card.id, taskId: task.id })
-                }
-              />
-            ))}
-        </Card>
-      ))}
+      {cards
+        .filter((card) => !card.isHidden)
+        .map((card) => (
+          <Card
+            key={card.id}
+            isCalculator={card.isCalculator}
+            cardId={card.id}
+            currentColor={card.color}
+            onClickColor={(color) =>
+              handleSetCardColor({ cardId: card.id, color })
+            }
+            progress={getCardProgress({ tasks: card.tasks || [] })}
+            progressCalculatorIncremental={card.progressCalculatorIncremental}
+            onClickAddNewTask={() => {
+              handleClickAddNewTask({
+                cardId: card.id,
+                taskPosition: 1,
+                isCalculator: card.isCalculator,
+              });
+            }}
+            title={card.title}
+          >
+            {card.tasks
+              .filter((task) => task.cardId === card.id)
+              .sort((a, b) => (a.position < b.position ? -1 : 1))
+              .map((task) => (
+                <TaskInputCheckbox
+                  task={task}
+                  key={task.id}
+                  currentColor={card.color}
+                  onCheckInput={(event) => handleClickCheckTask(event, card.id)}
+                  onClickAddTask={({ cardId, taskPosition }) => {
+                    handleClickAddNewTask({
+                      taskPosition,
+                      cardId,
+                      isCalculator: card.isCalculator,
+                    });
+                  }}
+                  onClickDeleteTask={() =>
+                    handleDeleteTask({ cardId: card.id, taskId: task.id })
+                  }
+                />
+              ))}
+          </Card>
+        ))}
     </Container>
   );
 };

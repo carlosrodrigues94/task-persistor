@@ -65,8 +65,34 @@ export const useCardsUpdate = () => {
     return;
   };
 
+  const handleHideOrRecoverCard = async (data: {
+    cardId: string;
+    hide: boolean;
+  }) => {
+    setLoading(true);
+    const card = cards.find((item) => item.id === data.cardId);
+
+    if (!card) return;
+
+    const updates: Record<string, ICard> = {
+      [`cards/${data.cardId}`]: {
+        ...card,
+        isHidden: data.hide,
+      },
+    };
+
+    await update(ref(database), updates);
+
+    refresh();
+
+    setLoading(false);
+
+    return;
+  };
+
   return {
     handleSetCardColor,
     handleToggleProgressCalculatorType,
+    handleHideOrRecoverCard,
   };
 };

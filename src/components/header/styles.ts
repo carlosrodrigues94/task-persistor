@@ -86,12 +86,17 @@ export const AvatarContainer = styled.div`
   border-radius: 32px;
   border: 2px solid ${colors.blue};
   margin: 0 8px;
+  position: relative;
 
   img {
     object-fit: contain;
     width: 42px;
     height: 42px;
     border-radius: 32px;
+  }
+
+  &:hover {
+    cursor: pointer;
   }
 `;
 
@@ -116,5 +121,38 @@ export const Button = styled.button`
 
   &:hover {
     filter: saturate(0.8);
+  }
+`;
+
+export const ListHiddenItems = styled.ul<{ isDropdownOpen: boolean }>`
+  display: ${({ isDropdownOpen }) => (isDropdownOpen ? "flex" : "none")};
+  min-width: 150px;
+  flex-direction: column;
+  top: 64px;
+  position: absolute;
+  background: #dcdde1;
+  border-radius: 4px;
+  padding: 6px;
+  max-height: 500px;
+  overflow-y: auto;
+  min-width: 240px;
+
+  li {
+    display: flex;
+    height: 34px;
+    align-items: center;
+    list-style: none;
+    width: 100%;
+    font-size: 14px;
+    margin: 4px 0;
+
+    button {
+      margin: 0 0 0 auto;
+      height: 32px;
+      width: 32px;
+      svg {
+        font-size: 14px;
+      }
+    }
   }
 `;

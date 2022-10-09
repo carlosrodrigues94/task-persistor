@@ -49,7 +49,8 @@ const Card: React.FC<CardProps> = ({
   const { handleDeleteCard } = useCardsDelete();
   const { cards } = useCardsList();
   const { handleDownloadCardData } = useCardsDownload();
-  const { handleToggleProgressCalculatorType } = useCardsUpdate();
+  const { handleToggleProgressCalculatorType, handleHideOrRecoverCard } =
+    useCardsUpdate();
 
   const progress: number = useMemo(() => {
     if (isCalculator || progressCalculatorIncremental) {
@@ -125,7 +126,10 @@ const Card: React.FC<CardProps> = ({
       >
         <FiArrowDown />
       </button>
-      <button className="button-minimize-card" onClick={() => {}}>
+      <button
+        className="button-minimize-card"
+        onClick={() => handleHideOrRecoverCard({ hide: true, cardId })}
+      >
         <FiMinus />
       </button>
       <button

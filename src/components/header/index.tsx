@@ -1,6 +1,13 @@
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { FormEvent, useEffect, useRef, useState } from "react";
 import { FaDollarSign } from "react-icons/fa";
-import { useCardsCreate, CreateCardProps } from "@/hooks/cards";
+import { FiRefreshCcw } from "react-icons/fi";
+import useOnClickOutside from "use-onclickoutside";
+import {
+  useCardsCreate,
+  CreateCardProps,
+  useCardsList,
+  useCardsUpdate,
+} from "@/hooks/cards";
 import { useAuth } from "@/hooks/use-auth";
 import { colors } from "@/styles/colors";
 import {
@@ -12,6 +19,7 @@ import {
   UserName,
   Button,
   InputContainer,
+  ListHiddenItems,
 } from "./styles";
 import { FiLogOut, FiPlus } from "react-icons/fi";
 
@@ -20,6 +28,11 @@ const Header: React.FC = () => {
   const [inputValue, setInputValue] = useState("");
   const [isCalculator, setIsCalculator] = useState(false);
   const { handleCreateCard } = useCardsCreate();
+  const { cards } = useCardsList();
+  const { handleHideOrRecoverCard } = useCardsUpdate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const refDropdown = useRef<HTMLUListElement>(null);
 
   function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -31,6 +44,7 @@ const Header: React.FC = () => {
       title: inputValue,
       isCalculator,
       progressCalculatorIncremental: true,
+      isHidden: false,
       tasks: [],
     };
 
@@ -39,12 +53,40 @@ const Header: React.FC = () => {
     setInputValue("");
   }
 
+  useOnClickOutside(refDropdown, () => setIsDropdownOpen(false));
+
   return (
     <Container>
       {isAuthenticated && (
         <>
-          <AvatarContainer>
+          <AvatarContainer
+            onClick={() => setIsDropdownOpen((oldState) => !oldState)}
+          >
             <img src={user.avatar} alt="avatar" />
+            <ListHiddenItems
+              isDropdownOpen={isDropdownOpen}
+              className="drop-down"
+              ref={refDropdown}
+            >
+              {cards
+                .filter((card) => card.isHidden)
+                .map((card) => (
+                  <li key={card.id}>
+                    {card.title}
+                    <Button
+                      type="button"
+                      onClick={() =>
+                        handleHideOrRecoverCard({
+                          hide: false,
+                          cardId: card.id,
+                        })
+                      }
+                    >
+                      <FiRefreshCcw />
+                    </Button>
+                  </li>
+                ))}
+            </ListHiddenItems>
           </AvatarContainer>
           <UserName>{user.userName}</UserName>
         </>
