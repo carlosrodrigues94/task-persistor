@@ -3,7 +3,6 @@ import { authState } from "@/state/auth/atoms";
 import { onValue, ref } from "firebase/database";
 import { database } from "@/services/firebase";
 import { toast } from "react-toastify";
-import { ICard } from "@/types/card";
 import { IIncome } from "@/types/income";
 
 export const incomesListState = selector({
@@ -14,21 +13,6 @@ export const incomesListState = selector({
       const { id } = get(authState);
 
       if (!id) return [];
-
-      const refCardsIds = ref(database, `user-cards-ids/${id}`);
-
-      let cardsIds: string[] = [];
-
-      onValue(refCardsIds, (snapshot) => {
-        const data = snapshot.val();
-
-        if (!snapshot.val()) {
-          cardsIds = [];
-          return;
-        }
-
-        cardsIds = [];
-      });
 
       const refIncomes = ref(database, `incomes`);
 

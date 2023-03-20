@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { colors } from "@/styles/colors";
+import { theme } from "@/styles/theme";
 
 interface ContainerProps {
   currentColor: string;
@@ -120,6 +121,31 @@ export const CardHeader = styled.header`
       cursor: pointer;
       transition: all 0.1s;
       transform: scale(1.1);
+    }
+  }
+`;
+
+export const SwitchAndButtonContent = styled.div<{ currentColor: string }>`
+  display: flex;
+  width: 100%;
+
+  #button-add-salary {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    background: none;
+    border: 1px solid ${theme.colors.borderColor};
+    color: ${theme.colors.textColor};
+    padding: 4px;
+    border-radius: 4px;
+
+    svg {
+      margin-left: 12px;
+    }
+
+    &:hover {
+      background: ${(props) => props.currentColor};
+      color: #fff;
     }
   }
 `;

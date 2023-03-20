@@ -1,7 +1,7 @@
 import React, { ReactNode, useMemo } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import Switch from "react-switch";
-import { FaPowerOff } from "react-icons/fa";
+import { FaPowerOff, FaWallet } from "react-icons/fa";
 import { FiArrowDown, FiMinus } from "react-icons/fi";
 
 import {
@@ -13,13 +13,17 @@ import {
 
 import { ITask } from "@/types/task";
 import { ColorKey, colors } from "@/styles/colors";
-import { formatCurrency } from "@/utils";
+import {
+  calculateProgressDecremental,
+  calculateProgressIncremental,
+} from "@/utils/currency";
 
 import {
   Container,
   CardHeader,
   ProgressContent,
   DivContentAddNewTask,
+  SwitchAndButtonContent,
 } from "./styles";
 import { lighten } from "polished";
 import { Incomes } from "../incomes";
@@ -31,40 +35,12 @@ interface CardProps {
   progress: number;
   title: string;
   onClickAddNewTask: () => void;
+  onClickAddNewIncome: () => void;
   cardId: string;
   isCalculator: boolean;
   children: ReactNode;
   progressCalculatorIncremental: boolean;
 }
-
-const formatCentsValueToCurrencyString = (value: number) => {
-  return formatCurrency(String(value / 100));
-};
-
-const calculateProgressIncremental = (tasks: ITask[], cardId: string) => {
-  const { amount } = tasks
-    .filter((task) => task.cardId === cardId)
-    .filter((task) => !task.isCompleted)
-    .reduce(
-      (prev, curr) => {
-        return { ...prev, amount: prev.amount + curr.amount };
-      },
-      { amount: 0 }
-    );
-
-  return formatCentsValueToCurrencyString(amount);
-};
-
-const calculateProgressDecremental = (tasks: ITask[]) => {
-  const { amount } = tasks.reduce(
-    (prev, curr) => {
-      return { ...prev, amount: prev.amount - curr.amount };
-    },
-    { amount: 0 }
-  );
-
-  return formatCentsValueToCurrencyString(amount);
-};
 
 const Card: React.FC<CardProps> = ({
   children,
@@ -73,6 +49,7 @@ const Card: React.FC<CardProps> = ({
   progress: tasksProgress = 0,
   title,
   onClickAddNewTask,
+  onClickAddNewIncome,
   cardId,
   isCalculator,
   progressCalculatorIncremental = true,
@@ -128,14 +105,7 @@ const Card: React.FC<CardProps> = ({
     return calculateProgressDecremental(filtered);
   };
 
-  const salary = Number("9.080,00".replace(/\D/g, ""));
-  const salaryAsCents = salary * 100;
   const progressValue = getProgressValue();
-  const progressValueNumber = Number(
-    Number(progressValue.replace(/\D/g, "")).toFixed(0)
-  );
-  const progressAsCents = progressValueNumber * 100;
-  const salaryWithoutProgress = salaryAsCents - progressAsCents;
 
   return (
     <Container currentColor={currentColor}>
@@ -188,41 +158,38 @@ const Card: React.FC<CardProps> = ({
             value={progress}
             text={progressValue}
           />
-          {isCalculator && (
-            // <CircularProgressbar
-            //   className="progress"
-            //   styles={buildStyles({
-            //     pathColor: currentColor,
-            //     textColor: currentColor,
-            //     textSize: isCalculator ? 14 : 18,
-            //   })}
-            //   value={progress}
-            //   text={formatCentsValueToCurrencyString(salaryWithoutProgress)}
-            // />
-
+          {isCalculator && !!incomes.find((item) => item.cardId === cardId) && (
             <Incomes cardId={cardId} currentColor={currentColor} />
           )}
         </>
       </ProgressContent>
-      <Switch
-        className="switch"
-        checked={progressCalculatorIncremental}
-        onChange={() => {
-          handleToggleProgressCalculatorType({
-            cardId: cardId,
-          });
-        }}
-        height={18}
-        handleDiameter={22}
-        onHandleColor={currentColor}
-        offHandleColor={currentColor}
-        checkedIcon={false}
-        uncheckedIcon={false}
-        onColor={lighten(0.3, currentColor)}
-        offColor={"#dcdde1"}
-        width={42}
-      />
-
+      <SwitchAndButtonContent currentColor={currentColor}>
+        <button
+          type="button"
+          id="button-add-salary"
+          onClick={onClickAddNewIncome}
+        >
+          Add Salary <FaWallet />
+        </button>
+        <Switch
+          className="switch"
+          checked={progressCalculatorIncremental}
+          onChange={() => {
+            handleToggleProgressCalculatorType({
+              cardId: cardId,
+            });
+          }}
+          height={18}
+          handleDiameter={22}
+          onHandleColor={currentColor}
+          offHandleColor={currentColor}
+          checkedIcon={false}
+          uncheckedIcon={false}
+          onColor={lighten(0.3, currentColor)}
+          offColor={"#dcdde1"}
+          width={42}
+        />
+      </SwitchAndButtonContent>
       <div className="card-title">
         <h4>{title}</h4>
       </div>

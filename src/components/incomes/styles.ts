@@ -12,6 +12,27 @@ export const Container = styled.div`
   > span {
     display: flex;
     width: 100%;
+    font-size: 12px;
+  }
+
+  #button-delete-income {
+    background: none;
+    border: 0;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    color: ${theme.colors.textColor};
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    margin-left: auto;
+    font-size: 12px;
+
+    &:hover {
+      background: ${colors.red};
+      color: #fff;
+    }
   }
 `;
 
@@ -22,7 +43,7 @@ export const IncomeValue = styled.div<{
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 20px;
+  height: 26px;
   border: 1px solid ${theme.colors.borderColor};
   border-radius: 4px;
   position: relative;
@@ -33,7 +54,7 @@ export const IncomeValue = styled.div<{
   span {
     color: ${({ progress }) =>
       progress >= 100 ? "#fff" : theme.colors.boldTextColor};
-    margin: 0 2px 0 auto;
+    margin: 0 4px 0 auto;
     font-size: 12px;
   }
 

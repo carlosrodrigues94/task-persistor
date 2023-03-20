@@ -1,10 +1,10 @@
+import React, { Fragment, useCallback, useMemo } from "react";
 import { useCardsList } from "@/hooks/cards";
-import { useIncomesList } from "@/hooks/incomes";
+import { useIncomesDelete, useIncomesList } from "@/hooks/incomes";
 import { colors } from "@/styles/colors";
 import { ICard } from "@/types/card";
 import { formatCurrency } from "@/utils";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-
+import { MdOutlineClose } from "react-icons/md";
 import { Container, IncomeValue } from "./styles";
 
 export const Incomes: React.FC<{ currentColor: string; cardId: string }> = ({
@@ -12,7 +12,8 @@ export const Incomes: React.FC<{ currentColor: string; cardId: string }> = ({
   cardId,
 }) => {
   const { cards } = useCardsList();
-  const { incomes } = useIncomesList();
+  const incomesList = useIncomesList();
+  const { handleDeleteIncome } = useIncomesDelete();
 
   const card = useMemo((): ICard => {
     const result = cards.find((item) => item.id === cardId);
@@ -32,8 +33,12 @@ export const Incomes: React.FC<{ currentColor: string; cardId: string }> = ({
     return result;
   }, [cards]);
 
+  const incomes = useMemo(() => {
+    return incomesList.incomes.filter((item) => item.cardId === cardId);
+  }, [incomesList]);
+
   const calculateProgress = useCallback(() => {
-    const income = { id: "a", title: "Salary", amount: 90800000 };
+    const income = incomes.length ? incomes[0] : null;
     const completed = card.tasks.filter((item) => item.isCompleted);
 
     if (!income) {
@@ -86,48 +91,59 @@ export const Incomes: React.FC<{ currentColor: string; cardId: string }> = ({
 
   return (
     <Container>
-      {incomes.map((item) => (
-        <>
-          <span>{item.title}</span>
-          <IncomeValue
-            progress={
-              calculated.salaryProgress > 100 ? 100 : calculated.salaryProgress
-            }
-            currentColor={currentColor}
-          >
-            <span>{formatCurrency(String(item.amount / 100))}</span>
-          </IncomeValue>
+      {incomes
+        .filter((item) => item.cardId === cardId)
+        .map((item) => (
+          <Fragment key={item.id}>
+            <button
+              type="button"
+              id="button-delete-income"
+              onClick={() => handleDeleteIncome(item.id)}
+            >
+              <MdOutlineClose />
+            </button>
+            <span>{item.title}</span>
+            <IncomeValue
+              progress={
+                calculated.salaryProgress > 100
+                  ? 100
+                  : calculated.salaryProgress
+              }
+              currentColor={currentColor}
+            >
+              <span>{formatCurrency(String(item.amount / 100))}</span>
+            </IncomeValue>
 
-          <span>{"Restante"}</span>
-          <IncomeValue
-            progress={
-              calculated.salaryRemainingProgress >= 100
-                ? 100
-                : calculated.salaryRemainingProgress
-            }
-            currentColor={
-              calculated.salaryRemaining < calculated.twentyPercentOfSalary
-                ? colors.red
-                : colors.green
-            }
-          >
-            <span>
-              {formatCurrency(String(calculated.salaryRemaining / 100))}
-            </span>
-          </IncomeValue>
+            <span>{"Saldo"}</span>
+            <IncomeValue
+              progress={
+                calculated.salaryRemainingProgress >= 100
+                  ? 100
+                  : calculated.salaryRemainingProgress
+              }
+              currentColor={
+                calculated.salaryRemaining < calculated.twentyPercentOfSalary
+                  ? colors.red
+                  : colors.green
+              }
+            >
+              <span>
+                {formatCurrency(String(calculated.salaryRemaining / 100))}
+              </span>
+            </IncomeValue>
 
-          {calculated.isIndebtedness && (
-            <>
-              <span>{"Falta"}</span>
-              <IncomeValue progress={100} currentColor={colors.red}>
-                <span>
-                  {formatCurrency(String(calculated.indebtednessValue / 100))}
-                </span>
-              </IncomeValue>
-            </>
-          )}
-        </>
-      ))}
+            {calculated.isIndebtedness && (
+              <>
+                <span>{"Falta"}</span>
+                <IncomeValue progress={100} currentColor={colors.red}>
+                  <span>
+                    {formatCurrency(String(calculated.indebtednessValue / 100))}
+                  </span>
+                </IncomeValue>
+              </>
+            )}
+          </Fragment>
+        ))}
     </Container>
   );
 };

@@ -104,19 +104,21 @@ export const Dashboard: FC = () => {
     setNewIncomeCardId(data.cardId);
   }, []);
 
-  function handleConfirmAddNewIncome(data: { amount: string; title: string }) {
-    const amount = Number(data.amount.replace(/\D/g, ""));
+  const handleConfirmAddNewIncome = useCallback(
+    (data: { amount: string; title: string }) => {
+      const amount = Number(data.amount.replace(/\D/g, ""));
 
-    console.log("VAI CRIAR UMA INCOME");
+      handleCreateIncome({
+        title: data.title,
+        cardId: newIncomeCardId,
+        amount: amount * 100,
+      });
 
-    handleCreateIncome({
-      title: data.title,
-      cardId: newIncomeCardId,
-      amount,
-    });
-
-    setShowModalAddNewIncome(false);
-  }
+      setShowModalAddNewIncome(false);
+      setNewIncomeCardId("");
+    },
+    [handleCreateIncome, newIncomeCardId]
+  );
 
   function getCardProgress(data: { tasks: ITask[] }) {
     const completed = data.tasks.filter((task) => task.isCompleted);
@@ -183,43 +185,34 @@ export const Dashboard: FC = () => {
                 isCalculator: card.isCalculator,
               });
             }}
+            onClickAddNewIncome={() => {
+              handleClickAddNewIncome({
+                cardId: card.id,
+              });
+            }}
             title={card.title}
           >
-            <React.Fragment>
-              <button
-                type="button"
-                onClick={() => {
-                  handleClickAddNewIncome({
-                    cardId: card.id,
-                  });
-                }}
-              >
-                ADICIONAR SALARIO
-              </button>
-              {card.tasks
-                .filter((task) => task.cardId === card.id)
-                .sort((a, b) => (a.position < b.position ? -1 : 1))
-                .map((task) => (
-                  <TaskInputCheckbox
-                    task={task}
-                    key={task.id}
-                    currentColor={card.color}
-                    onCheckInput={(event) =>
-                      handleClickCheckTask(event, card.id)
-                    }
-                    onClickAddTask={({ cardId, taskPosition }) => {
-                      handleClickAddNewTask({
-                        taskPosition,
-                        cardId,
-                        isCalculator: card.isCalculator,
-                      });
-                    }}
-                    onClickDeleteTask={() =>
-                      handleDeleteTask({ cardId: card.id, taskId: task.id })
-                    }
-                  />
-                ))}
-            </React.Fragment>
+            {card.tasks
+              .filter((task) => task.cardId === card.id)
+              .sort((a, b) => (a.position < b.position ? -1 : 1))
+              .map((task) => (
+                <TaskInputCheckbox
+                  task={task}
+                  key={task.id}
+                  currentColor={card.color}
+                  onCheckInput={(event) => handleClickCheckTask(event, card.id)}
+                  onClickAddTask={({ cardId, taskPosition }) => {
+                    handleClickAddNewTask({
+                      taskPosition,
+                      cardId,
+                      isCalculator: card.isCalculator,
+                    });
+                  }}
+                  onClickDeleteTask={() =>
+                    handleDeleteTask({ cardId: card.id, taskId: task.id })
+                  }
+                />
+              ))}
           </Card>
         ))}
     </Container>

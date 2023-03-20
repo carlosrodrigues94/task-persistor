@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { formatCurrency } from "@/utils";
 import { SimpleModal } from "@/components/modals/simple-modal";
 import { Content } from "./styles";
@@ -19,11 +19,11 @@ const ModalAddNewIncome: React.FC<ModalAddNewIncomeProps> = ({
 
   const refInput = useRef<HTMLInputElement>(null);
 
-  function handleClickConfirm() {
+  const handleClickConfirm = useCallback(() => {
     onClickConfirm({ title: inputTitle, amount: inputAmount });
     setInputTitle("");
     setInputAmount("");
-  }
+  }, [inputTitle, inputAmount, onClickConfirm]);
 
   useEffect(() => {
     if (!refInput.current) return;
@@ -41,10 +41,12 @@ const ModalAddNewIncome: React.FC<ModalAddNewIncomeProps> = ({
     <SimpleModal
       isOpen={isOpen}
       onClickCancel={onClickCancel}
-      onClickConfirm={handleClickConfirm}
+      onClickConfirm={() => {
+        handleClickConfirm();
+      }}
       headerText="Add new Income"
       typeButton="submit"
-      onSubmit={handleClickConfirm}
+      onSubmit={() => {}}
     >
       <Content>
         <input
