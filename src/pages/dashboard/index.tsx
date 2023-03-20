@@ -1,4 +1,10 @@
-import { ChangeEvent, FC, useCallback, useEffect, useState } from "react";
+import React, {
+  ChangeEvent,
+  FC,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 
 import { Container } from "./styles";
 
@@ -14,6 +20,8 @@ import { useTasksCreate, useTasksDelete, useTasksUpdate } from "@/hooks/tasks";
 import { NoCards } from "@/components/no-cards";
 import { useAuth } from "@/hooks/use-auth";
 import { logo } from "@/assets";
+import { useIncomesCreate } from "@/hooks/incomes";
+import { ModalAddNewIncome } from "@/components/modals/modal-add-new-income";
 
 export const Dashboard: FC = () => {
   const { isAuthenticated } = useAuth();
@@ -22,11 +30,14 @@ export const Dashboard: FC = () => {
   const { handleChangeTaskCheck } = useTasksUpdate();
   const { handleDeleteTask } = useTasksDelete();
   const { handleCreateTask } = useTasksCreate();
+  const { handleCreateIncome } = useIncomesCreate();
 
   const [showModalAddNewTask, setShowModalAddNewTask] = useState(false);
   const [showModalAddNewCalcTask, setShowModalAddNewCalcTask] = useState(false);
+  const [showModalAddNewIncome, setShowModalAddNewIncome] = useState(false);
   const [newTaskPosition, setNewTaskPosition] = useState(0);
   const [newTaskCardId, setNewTaskCardId] = useState("");
+  const [newIncomeCardId, setNewIncomeCardId] = useState("");
 
   function handleClickCheckTask(
     event: ChangeEvent<HTMLInputElement>,
@@ -88,6 +99,27 @@ export const Dashboard: FC = () => {
     []
   );
 
+  const handleClickAddNewIncome = useCallback((data: { cardId: string }) => {
+    setShowModalAddNewIncome(true);
+    setNewIncomeCardId(data.cardId);
+  }, []);
+
+  const handleConfirmAddNewIncome = useCallback(
+    (data: { amount: string; title: string }) => {
+      const amount = Number(data.amount.replace(/\D/g, ""));
+
+      handleCreateIncome({
+        title: data.title,
+        cardId: newIncomeCardId,
+        amount: amount * 100,
+      });
+
+      setShowModalAddNewIncome(false);
+      setNewIncomeCardId("");
+    },
+    [handleCreateIncome, newIncomeCardId]
+  );
+
   function getCardProgress(data: { tasks: ITask[] }) {
     const completed = data.tasks.filter((task) => task.isCompleted);
 
@@ -119,6 +151,20 @@ export const Dashboard: FC = () => {
         }}
       />
 
+      <ModalAddNewIncome
+        isOpen={showModalAddNewIncome}
+        onClickCancel={() => {
+          setShowModalAddNewIncome(false);
+          setNewIncomeCardId("");
+        }}
+        onClickConfirm={(value) => {
+          handleConfirmAddNewIncome({
+            amount: value.amount,
+            title: value.title,
+          });
+        }}
+      />
+
       {cards
         .filter((card) => !card.isHidden)
         .map((card) => (
@@ -137,6 +183,11 @@ export const Dashboard: FC = () => {
                 cardId: card.id,
                 taskPosition: 1,
                 isCalculator: card.isCalculator,
+              });
+            }}
+            onClickAddNewIncome={() => {
+              handleClickAddNewIncome({
+                cardId: card.id,
               });
             }}
             title={card.title}

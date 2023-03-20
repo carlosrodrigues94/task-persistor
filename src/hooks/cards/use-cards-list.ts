@@ -13,10 +13,6 @@ export const useCardsList = () => {
     refresh();
   }, [refresh]);
 
-  // useEffect(() => {
-  //   refresh();
-  // }, [refresh]);
-
   return {
     handleRefreshCardsList,
     cards,

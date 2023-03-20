@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { colors } from "@/styles/colors";
+import { theme } from "@/styles/theme";
 
 interface ContainerProps {
   currentColor: string;
@@ -15,7 +16,7 @@ export const Container = styled.div<ContainerProps>`
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: #fff;
-  padding: 16px;
+  padding: 14px;
   transition: all 0.3s;
   position: relative;
   margin: 16px;
@@ -124,6 +125,31 @@ export const CardHeader = styled.header`
   }
 `;
 
+export const SwitchAndButtonContent = styled.div<{ currentColor: string }>`
+  display: flex;
+  width: 100%;
+
+  #button-add-salary {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    background: none;
+    border: 1px solid ${theme.colors.borderColor};
+    color: ${theme.colors.textColor};
+    padding: 4px;
+    border-radius: 4px;
+
+    svg {
+      margin-left: 12px;
+    }
+
+    &:hover {
+      background: ${(props) => props.currentColor};
+      color: #fff;
+    }
+  }
+`;
+
 export const DivContentAddNewTask = styled.div<{ currentColor: string }>`
   display: flex;
   align-items: center;
@@ -146,7 +172,8 @@ export const DivContentAddNewTask = styled.div<{ currentColor: string }>`
 `;
 
 export const ProgressContent = styled.div`
+  display: flex;
   height: 150px;
-  width: 150px;
-  margin: 0 0 16px 0;
+  width: 100%;
+  margin: 0 0 8px 0;
 `;
