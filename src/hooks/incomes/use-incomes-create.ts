@@ -1,15 +1,17 @@
 import { database } from "@/services/firebase";
 import { loadingState } from "@/state/loading/atoms";
 import { get, ref, set } from "firebase/database";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { v4 as uuid } from "uuid";
 import { useRecoilRefresher_UNSTABLE as useRecoilRefresher } from "recoil";
 import { IIncome } from "@/types/income";
 import { incomesListState } from "@/state/incomes/list/atoms";
+import { cardsListState } from "@/state/cards/list/atoms";
 
 export const useIncomesCreate = () => {
   const [, setLoading] = useRecoilState(loadingState);
   const refresh = useRecoilRefresher(incomesListState);
+  const cards = useRecoilValue(cardsListState);
 
   const handleCreateIncome = async (data: Omit<IIncome, "id">) => {
     setLoading(true);
@@ -17,6 +19,14 @@ export const useIncomesCreate = () => {
     const id = uuid();
     const refIncomes = ref(database, `incomes/${id}`);
     const incomesData = await get(ref(database, `incomes`));
+
+    const isCalculatorCard = cards.find(
+      (item) => item.id === data.cardId && item.isCalculator
+    );
+
+    if (!isCalculatorCard) {
+      return;
+    }
 
     if (!incomesData.val()) {
       await set(refIncomes, { id, ...data, createdAt: new Date() });
