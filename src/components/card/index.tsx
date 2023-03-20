@@ -22,6 +22,8 @@ import {
   DivContentAddNewTask,
 } from "./styles";
 import { lighten } from "polished";
+import { Incomes } from "../incomes";
+import { useIncomesList } from "@/hooks/incomes";
 
 interface CardProps {
   currentColor: string;
@@ -34,6 +36,35 @@ interface CardProps {
   children: ReactNode;
   progressCalculatorIncremental: boolean;
 }
+
+const formatCentsValueToCurrencyString = (value: number) => {
+  return formatCurrency(String(value / 100));
+};
+
+const calculateProgressIncremental = (tasks: ITask[], cardId: string) => {
+  const { amount } = tasks
+    .filter((task) => task.cardId === cardId)
+    .filter((task) => !task.isCompleted)
+    .reduce(
+      (prev, curr) => {
+        return { ...prev, amount: prev.amount + curr.amount };
+      },
+      { amount: 0 }
+    );
+
+  return formatCentsValueToCurrencyString(amount);
+};
+
+const calculateProgressDecremental = (tasks: ITask[]) => {
+  const { amount } = tasks.reduce(
+    (prev, curr) => {
+      return { ...prev, amount: prev.amount - curr.amount };
+    },
+    { amount: 0 }
+  );
+
+  return formatCentsValueToCurrencyString(amount);
+};
 
 const Card: React.FC<CardProps> = ({
   children,
@@ -48,6 +79,7 @@ const Card: React.FC<CardProps> = ({
 }) => {
   const { handleDeleteCard } = useCardsDelete();
   const { cards } = useCardsList();
+  const { incomes } = useIncomesList();
   const { handleDownloadCardData } = useCardsDownload();
   const { handleToggleProgressCalculatorType, handleHideOrRecoverCard } =
     useCardsUpdate();
@@ -89,29 +121,21 @@ const Card: React.FC<CardProps> = ({
       return `${progress ? progress.toFixed(0) : 0}%`;
     }
 
-    const { amount } = filtered.reduce(
-      (prev, curr) => {
-        return { ...prev, amount: prev.amount - curr.amount };
-      },
-      { amount: 0 }
-    );
-
     if (progressCalculatorIncremental) {
-      const { amount } = tasks
-        .filter((task) => task.cardId === cardId)
-        .filter((task) => !task.isCompleted)
-        .reduce(
-          (prev, curr) => {
-            return { ...prev, amount: prev.amount + curr.amount };
-          },
-          { amount: 0 }
-        );
-
-      return `${formatCurrency(String(amount / 100))}`;
+      return calculateProgressIncremental(tasks, cardId);
     }
 
-    return `${formatCurrency(String(amount / 100))}`;
+    return calculateProgressDecremental(filtered);
   };
+
+  const salary = Number("9.080,00".replace(/\D/g, ""));
+  const salaryAsCents = salary * 100;
+  const progressValue = getProgressValue();
+  const progressValueNumber = Number(
+    Number(progressValue.replace(/\D/g, "")).toFixed(0)
+  );
+  const progressAsCents = progressValueNumber * 100;
+  const salaryWithoutProgress = salaryAsCents - progressAsCents;
 
   return (
     <Container currentColor={currentColor}>
@@ -153,16 +177,32 @@ const Card: React.FC<CardProps> = ({
         })}
       </CardHeader>
       <ProgressContent>
-        <CircularProgressbar
-          className="progress"
-          styles={buildStyles({
-            pathColor: currentColor,
-            textColor: currentColor,
-            textSize: isCalculator ? 14 : 18,
-          })}
-          value={progress}
-          text={getProgressValue()}
-        />
+        <>
+          <CircularProgressbar
+            className="progress"
+            styles={buildStyles({
+              pathColor: currentColor,
+              textColor: currentColor,
+              textSize: isCalculator ? 14 : 18,
+            })}
+            value={progress}
+            text={progressValue}
+          />
+          {isCalculator && (
+            // <CircularProgressbar
+            //   className="progress"
+            //   styles={buildStyles({
+            //     pathColor: currentColor,
+            //     textColor: currentColor,
+            //     textSize: isCalculator ? 14 : 18,
+            //   })}
+            //   value={progress}
+            //   text={formatCentsValueToCurrencyString(salaryWithoutProgress)}
+            // />
+
+            <Incomes cardId={cardId} currentColor={currentColor} />
+          )}
+        </>
       </ProgressContent>
       <Switch
         className="switch"

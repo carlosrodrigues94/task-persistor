@@ -15,7 +15,7 @@ export const Container = styled.div<ContainerProps>`
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: #fff;
-  padding: 16px;
+  padding: 14px;
   transition: all 0.3s;
   position: relative;
   margin: 16px;
@@ -146,7 +146,8 @@ export const DivContentAddNewTask = styled.div<{ currentColor: string }>`
 `;
 
 export const ProgressContent = styled.div`
+  display: flex;
   height: 150px;
-  width: 150px;
-  margin: 0 0 16px 0;
+  width: 100%;
+  margin: 0 0 8px 0;
 `;
