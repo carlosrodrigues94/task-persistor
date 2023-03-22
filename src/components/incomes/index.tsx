@@ -4,8 +4,10 @@ import { useIncomesDelete, useIncomesList } from "@/hooks/incomes";
 import { colors } from "@/styles/colors";
 import { ICard } from "@/types/card";
 import { formatCurrency } from "@/utils";
-import { MdOutlineClose } from "react-icons/md";
+import { MdOutlineClose, MdOutlineDoDisturbOn } from "react-icons/md";
 import { Container, IncomeValue } from "./styles";
+import { FaWallet } from "react-icons/fa";
+import { MdSaveAlt } from "react-icons/md";
 
 export const Incomes: React.FC<{ currentColor: string; cardId: string }> = ({
   currentColor,
@@ -102,7 +104,7 @@ export const Incomes: React.FC<{ currentColor: string; cardId: string }> = ({
             >
               <MdOutlineClose />
             </button>
-            <span>{item.title}</span>
+
             <IncomeValue
               progress={
                 calculated.salaryProgress > 100
@@ -111,10 +113,12 @@ export const Incomes: React.FC<{ currentColor: string; cardId: string }> = ({
               }
               currentColor={currentColor}
             >
-              <span>{formatCurrency(String(item.amount / 100))}</span>
+              <span>
+                <FaWallet />
+                {formatCurrency(String(item.amount / 100))}
+              </span>
             </IncomeValue>
 
-            <span>{"Saldo"}</span>
             <IncomeValue
               progress={
                 calculated.salaryRemainingProgress >= 100
@@ -128,15 +132,16 @@ export const Incomes: React.FC<{ currentColor: string; cardId: string }> = ({
               }
             >
               <span>
+                <MdSaveAlt />
                 {formatCurrency(String(calculated.salaryRemaining / 100))}
               </span>
             </IncomeValue>
 
             {calculated.isIndebtedness && (
               <>
-                <span>{"Falta"}</span>
                 <IncomeValue progress={100} currentColor={colors.red}>
                   <span>
+                    <MdOutlineDoDisturbOn />
                     {formatCurrency(String(calculated.indebtednessValue / 100))}
                   </span>
                 </IncomeValue>

@@ -9,12 +9,6 @@ export const Container = styled.div`
   font-size: 14px;
   padding: 4px;
 
-  > span {
-    display: flex;
-    width: 100%;
-    font-size: 12px;
-  }
-
   #button-delete-income {
     background: none;
     border: 0;
@@ -56,6 +50,12 @@ export const IncomeValue = styled.div<{
       progress >= 100 ? "#fff" : theme.colors.boldTextColor};
     margin: 0 4px 0 auto;
     font-size: 12px;
+
+    svg {
+      position: absolute;
+      left: 8px;
+      font-size: 14px;
+    }
   }
 
   &:before {

@@ -164,13 +164,15 @@ const Card: React.FC<CardProps> = ({
         </>
       </ProgressContent>
       <SwitchAndButtonContent currentColor={currentColor}>
-        <button
-          type="button"
-          id="button-add-salary"
-          onClick={onClickAddNewIncome}
-        >
-          Add Salary <FaWallet />
-        </button>
+        {isCalculator && (
+          <button
+            type="button"
+            id="button-add-salary"
+            onClick={onClickAddNewIncome}
+          >
+            Add Income <FaWallet />
+          </button>
+        )}
         <Switch
           className="switch"
           checked={progressCalculatorIncremental}
