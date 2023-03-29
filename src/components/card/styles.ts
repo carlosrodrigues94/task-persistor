@@ -129,6 +129,25 @@ export const SwitchAndButtonContent = styled.div<{ currentColor: string }>`
   display: flex;
   width: 100%;
 
+  #button-sort-tasks {
+    font-size: 14px;
+    background: none;
+    width: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    border: 0;
+    color: ${({ currentColor }) => currentColor};
+    border-radius: 4px;
+    margin: 0 8px 0 4px;
+
+    &:hover {
+      color: #fff;
+      background: ${({ currentColor }) => currentColor};
+    }
+  }
+
   #button-add-salary {
     display: flex;
     align-items: center;

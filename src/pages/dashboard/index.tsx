@@ -38,6 +38,10 @@ export const Dashboard: FC = () => {
   const [newTaskPosition, setNewTaskPosition] = useState(0);
   const [newTaskCardId, setNewTaskCardId] = useState("");
   const [newIncomeCardId, setNewIncomeCardId] = useState("");
+  const [tasksSortType, setTasksSortType] = useState<{
+    sortType: "asc" | "desc";
+    cardId: string;
+  }>({ sortType: "desc", cardId: "" });
 
   function handleClickCheckTask(
     event: ChangeEvent<HTMLInputElement>,
@@ -127,6 +131,37 @@ export const Dashboard: FC = () => {
     return parseInt(progressCalc.toFixed(0));
   }
 
+  const handleClickButtonSort = useCallback(
+    (cardId: string) => {
+      if (tasksSortType.sortType === "asc") {
+        setTasksSortType({ cardId, sortType: "desc" });
+        return;
+      }
+      setTasksSortType({ cardId, sortType: "asc" });
+    },
+    [tasksSortType]
+  );
+
+  function sortTasks(a: ITask, b: ITask): number {
+    if (tasksSortType.sortType === "asc" && a.amount < b.amount) {
+      return -1;
+    }
+
+    if (tasksSortType.sortType === "asc" && a.amount > b.amount) {
+      return 1;
+    }
+
+    if (tasksSortType.sortType === "desc" && a.amount < b.amount) {
+      return 1;
+    }
+
+    if (tasksSortType.sortType === "desc" && a.amount > b.amount) {
+      return -1;
+    }
+
+    return 1;
+  }
+
   useEffect(() => {
     handleRefreshCardsList();
   }, [handleRefreshCardsList]);
@@ -167,6 +202,13 @@ export const Dashboard: FC = () => {
 
       {cards
         .filter((card) => !card.isHidden)
+        .sort((a, b) => {
+          const isLater = new Date(a.createdAt) > new Date(b.createdAt);
+          if (isLater) {
+            return 1;
+          }
+          return -1;
+        })
         .map((card) => (
           <Card
             key={card.id}
@@ -190,11 +232,13 @@ export const Dashboard: FC = () => {
                 cardId: card.id,
               });
             }}
+            sortType={tasksSortType.sortType}
+            onClickButtonSort={() => handleClickButtonSort(card.id)}
             title={card.title}
           >
             {card.tasks
               .filter((task) => task.cardId === card.id)
-              .sort((a, b) => (a.position < b.position ? -1 : 1))
+              .sort((a, b) => sortTasks(a, b))
               .map((task) => (
                 <TaskInputCheckbox
                   task={task}

@@ -1,7 +1,12 @@
-import React, { ReactNode, useMemo } from "react";
+import React, { ReactNode, useMemo, useState } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import Switch from "react-switch";
-import { FaPowerOff, FaWallet } from "react-icons/fa";
+import {
+  FaPowerOff,
+  FaSortAmountDownAlt,
+  FaSortAmountUpAlt,
+  FaWallet,
+} from "react-icons/fa";
 import { FiArrowDown, FiMinus } from "react-icons/fi";
 
 import {
@@ -40,6 +45,8 @@ interface CardProps {
   isCalculator: boolean;
   children: ReactNode;
   progressCalculatorIncremental: boolean;
+  onClickButtonSort: () => void;
+  sortType: "desc" | "asc";
 }
 
 const Card: React.FC<CardProps> = ({
@@ -53,6 +60,8 @@ const Card: React.FC<CardProps> = ({
   cardId,
   isCalculator,
   progressCalculatorIncremental = true,
+  onClickButtonSort,
+  sortType,
 }) => {
   const { handleDeleteCard } = useCardsDelete();
   const { cards } = useCardsList();
@@ -165,13 +174,26 @@ const Card: React.FC<CardProps> = ({
       </ProgressContent>
       <SwitchAndButtonContent currentColor={currentColor}>
         {isCalculator && (
-          <button
-            type="button"
-            id="button-add-salary"
-            onClick={onClickAddNewIncome}
-          >
-            Add Income <FaWallet />
-          </button>
+          <>
+            <button
+              type="button"
+              id="button-sort-tasks"
+              onClick={onClickButtonSort}
+            >
+              {sortType === "asc" ? (
+                <FaSortAmountDownAlt />
+              ) : (
+                <FaSortAmountUpAlt />
+              )}
+            </button>
+            <button
+              type="button"
+              id="button-add-salary"
+              onClick={onClickAddNewIncome}
+            >
+              Add Income <FaWallet />
+            </button>
+          </>
         )}
         <Switch
           className="switch"
