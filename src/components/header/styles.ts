@@ -13,6 +13,10 @@ export const Container = styled.div`
   background: #dcdde1;
   top: 0;
   padding: 0 8px;
+
+  .button-calculate-financing {
+    margin-right: 8px;
+  }
 `;
 
 export const Form = styled.form`
