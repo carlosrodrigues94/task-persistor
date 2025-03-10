@@ -1,5 +1,5 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import { FaDollarSign } from "react-icons/fa";
+import { FaDollarSign, FaCalculator } from "react-icons/fa";
 import { FiRefreshCcw } from "react-icons/fi";
 import useOnClickOutside from "use-onclickoutside";
 import {
@@ -22,6 +22,8 @@ import {
   ListHiddenItems,
 } from "./styles";
 import { FiLogOut, FiPlus } from "react-icons/fi";
+import { SimpleModal } from "../modals/simple-modal";
+import { FeeCalculator } from "../fee-calculator/fee-calculator";
 
 const Header: React.FC = () => {
   const { handleSignIn, user, isAuthenticated, handleSignOut } = useAuth();
@@ -31,7 +33,8 @@ const Header: React.FC = () => {
   const { cards } = useCardsList();
   const { handleHideOrRecoverCard } = useCardsUpdate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
+  const [isModalFeeCalculatorOpen, setIsModalFeeCalculatorOpen] =
+    useState(false);
   const refDropdown = useRef<HTMLUListElement>(null);
 
   function handleSubmit(event: FormEvent) {
@@ -57,6 +60,15 @@ const Header: React.FC = () => {
 
   return (
     <Container>
+      <SimpleModal
+        isOpen={isModalFeeCalculatorOpen}
+        onClickCancel={() => setIsModalFeeCalculatorOpen(false)}
+        onClickConfirm={() => {}}
+        headerText="Calculo de Financiamento"
+        typeButton="button"
+      >
+        <FeeCalculator />
+      </SimpleModal>
       {isAuthenticated && (
         <>
           <AvatarContainer
@@ -121,6 +133,14 @@ const Header: React.FC = () => {
           Login
         </Button>
       )}
+
+      <Button
+        type="button"
+        className="button-calculate-financing"
+        onClick={() => setIsModalFeeCalculatorOpen(true)}
+      >
+        <FaCalculator />
+      </Button>
 
       {isAuthenticated && (
         <Button type="button" onClick={handleSignOut}>

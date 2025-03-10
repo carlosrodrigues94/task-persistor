@@ -22,6 +22,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { logo } from "@/assets";
 import { useIncomesCreate } from "@/hooks/incomes";
 import { ModalAddNewIncome } from "@/components/modals/modal-add-new-income";
+import { FeeCalculator } from "@/components/fee-calculator/fee-calculator";
 
 export const Dashboard: FC = () => {
   const { isAuthenticated } = useAuth();

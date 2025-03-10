@@ -5,3 +5,9 @@ export const formatCurrency = (amount: string): string =>
     .replace(/(\d{1})(\d{10})$/, "$1.$2") // coloca ponto antes dos últimos 10 digitos
     .replace(/(\d{1})(\d{7})$/, "$1.$2") // coloca ponto antes dos últimos 7 digitos
     .replace(/(\d{1})(\d{1,2})$/, "$1,$2")}`;
+
+export function maskCurrencyBRL(value: number) {
+  return value
+    .toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
+    .replace("R$", "R$ "); // Ensure space after R$
+}

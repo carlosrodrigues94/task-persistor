@@ -19,7 +19,6 @@ export const Content = styled.div`
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
-  height: 400px;
   width: 400px;
   background: #fff;
   border-radius: 4px;
