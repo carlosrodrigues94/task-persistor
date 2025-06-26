@@ -1,45 +1,32 @@
-import React, { FormEvent, useEffect, useRef, useState } from "react";
-import {
-  FaDollarSign,
-  FaCalculator,
-  FaCalendar,
-  FaDashcube,
-} from "react-icons/fa";
+import React, { useRef, useState } from "react";
+import { FaCalculator, FaCalendar } from "react-icons/fa";
 import { FiRefreshCcw } from "react-icons/fi";
 import useOnClickOutside from "use-onclickoutside";
-import {
-  useCardsCreate,
-  CreateCardProps,
-  useCardsList,
-  useCardsUpdate,
-} from "@/hooks/cards";
+import { useCardsList, useCardsUpdate } from "@/hooks/cards";
 import { useAuth } from "@/hooks/use-auth";
-import { colors } from "@/styles/colors";
 import {
   Container,
-  ButtonEnableCalc,
   AvatarContainer,
-  ButtonAddCard,
-  Form,
   UserName,
   Button,
-  InputContainer,
   ListHiddenItems,
 } from "./styles";
 import { FiLogOut, FiPlus } from "react-icons/fi";
 import { SimpleModal } from "../modals/simple-modal";
 import { FeeCalculator } from "../fee-calculator/fee-calculator";
 import { CalendarInstallments } from "../calendar-installments";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { MdDashboard } from "react-icons/md";
+import { MODALS } from "@/constants/modals";
+import { useRecoilState } from "recoil";
+import { modalsState } from "@/state/modals/atoms";
+import { ModalAddNewCard } from "../modals/modal-add-new-card";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const [_, setModalOpen] = useRecoilState(modalsState);
   const { handleSignIn, user, isAuthenticated, handleSignOut } = useAuth();
-  const [inputValue, setInputValue] = useState("");
-  const [isCalculator, setIsCalculator] = useState(false);
-  const { handleCreateCard } = useCardsCreate();
+
   const { cards } = useCardsList();
   const { handleHideOrRecoverCard } = useCardsUpdate();
   const { handleRefreshCardsList } = useCardsList();
@@ -49,25 +36,6 @@ const Header: React.FC = () => {
 
   const [isModalCalendarOpen, setIsModalCalendarOpen] = useState(false);
   const refDropdown = useRef<HTMLUListElement>(null);
-
-  function handleSubmit(event: FormEvent) {
-    event.preventDefault();
-
-    if (!inputValue) return;
-
-    const data: CreateCardProps = {
-      color: colors.blue,
-      title: inputValue,
-      isCalculator,
-      progressCalculatorIncremental: true,
-      isHidden: false,
-      tasks: [],
-    };
-
-    handleCreateCard(data);
-
-    setInputValue("");
-  }
 
   useOnClickOutside(refDropdown, () => setIsDropdownOpen(false));
 
@@ -80,8 +48,13 @@ const Header: React.FC = () => {
     handleRefreshCardsList();
   };
 
+  const handleClickAddNewCard = () => {
+    setModalOpen(MODALS.ADD_NEW_CARD);
+  };
+
   return (
     <Container>
+      <ModalAddNewCard onClickCancel={() => setModalOpen("")} />
       <SimpleModal
         isOpen={isModalFeeCalculatorOpen}
         onClickCancel={() => setIsModalFeeCalculatorOpen(false)}
@@ -136,31 +109,13 @@ const Header: React.FC = () => {
         </>
       )}
       {isAuthenticated && (
-        <Form onSubmit={handleSubmit}>
-          <InputContainer
-            className="input-container"
-            isDisabled={location.pathname !== "/"}
-          >
-            <input
-              type="text"
-              disabled={location.pathname !== "/"}
-              placeholder="Card Title"
-              className="input-new-card"
-              value={inputValue}
-              onChange={(event) => setInputValue(event.target.value)}
-            />
-            <ButtonEnableCalc
-              type="button"
-              onClick={() => setIsCalculator(!isCalculator)}
-              isCalculator={isCalculator}
-            >
-              <FaDollarSign />
-            </ButtonEnableCalc>
-            <ButtonAddCard type="submit">
-              <FiPlus />
-            </ButtonAddCard>
-          </InputContainer>
-        </Form>
+        <Button
+          className="button-add-new-card"
+          type="button"
+          onClick={handleClickAddNewCard}
+        >
+          <FiPlus />
+        </Button>
       )}
 
       {!isAuthenticated && (
