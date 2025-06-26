@@ -1,5 +1,10 @@
 import React, { FormEvent, useEffect, useRef, useState } from "react";
-import { FaDollarSign, FaCalculator } from "react-icons/fa";
+import {
+  FaDollarSign,
+  FaCalculator,
+  FaCalendar,
+  FaDashcube,
+} from "react-icons/fa";
 import { FiRefreshCcw } from "react-icons/fi";
 import useOnClickOutside from "use-onclickoutside";
 import {
@@ -24,17 +29,25 @@ import {
 import { FiLogOut, FiPlus } from "react-icons/fi";
 import { SimpleModal } from "../modals/simple-modal";
 import { FeeCalculator } from "../fee-calculator/fee-calculator";
+import { CalendarInstallments } from "../calendar-installments";
+import { useLocation, useNavigate } from "react-router-dom";
+import { MdDashboard } from "react-icons/md";
 
 const Header: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const { handleSignIn, user, isAuthenticated, handleSignOut } = useAuth();
   const [inputValue, setInputValue] = useState("");
   const [isCalculator, setIsCalculator] = useState(false);
   const { handleCreateCard } = useCardsCreate();
   const { cards } = useCardsList();
   const { handleHideOrRecoverCard } = useCardsUpdate();
+  const { handleRefreshCardsList } = useCardsList();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isModalFeeCalculatorOpen, setIsModalFeeCalculatorOpen] =
     useState(false);
+
+  const [isModalCalendarOpen, setIsModalCalendarOpen] = useState(false);
   const refDropdown = useRef<HTMLUListElement>(null);
 
   function handleSubmit(event: FormEvent) {
@@ -58,6 +71,15 @@ const Header: React.FC = () => {
 
   useOnClickOutside(refDropdown, () => setIsDropdownOpen(false));
 
+  const handleClickCalendar = () => {
+    navigate("calendar");
+  };
+
+  const handleClickDashboard = () => {
+    navigate("/");
+    handleRefreshCardsList();
+  };
+
   return (
     <Container>
       <SimpleModal
@@ -68,6 +90,16 @@ const Header: React.FC = () => {
         typeButton="button"
       >
         <FeeCalculator />
+      </SimpleModal>
+
+      <SimpleModal
+        isOpen={isModalCalendarOpen}
+        onClickCancel={() => setIsModalCalendarOpen(false)}
+        onClickConfirm={() => {}}
+        headerText="Calendário"
+        typeButton="button"
+      >
+        <CalendarInstallments />
       </SimpleModal>
       {isAuthenticated && (
         <>
@@ -103,12 +135,15 @@ const Header: React.FC = () => {
           <UserName>{user.userName}</UserName>
         </>
       )}
-
       {isAuthenticated && (
         <Form onSubmit={handleSubmit}>
-          <InputContainer className="input-container">
+          <InputContainer
+            className="input-container"
+            isDisabled={location.pathname !== "/"}
+          >
             <input
               type="text"
+              disabled={location.pathname !== "/"}
               placeholder="Card Title"
               className="input-new-card"
               value={inputValue}
@@ -140,6 +175,22 @@ const Header: React.FC = () => {
         onClick={() => setIsModalFeeCalculatorOpen(true)}
       >
         <FaCalculator />
+      </Button>
+
+      <Button
+        type="button"
+        className="button-calculate-financing"
+        onClick={() => handleClickCalendar()}
+      >
+        <FaCalendar />
+      </Button>
+
+      <Button
+        type="button"
+        className="button-calculate-financing"
+        onClick={() => handleClickDashboard()}
+      >
+        <MdDashboard />
       </Button>
 
       {isAuthenticated && (

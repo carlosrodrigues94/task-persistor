@@ -7,6 +7,9 @@ export const formatCurrency = (amount: string): string =>
     .replace(/(\d{1})(\d{1,2})$/, "$1,$2")}`;
 
 export function maskCurrencyBRL(value: number) {
+  if (!value || value < 0) {
+    return "R$ 0.00";
+  }
   return value
     .toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
     .replace("R$", "R$ "); // Ensure space after R$

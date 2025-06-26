@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { colors } from "@/styles/colors";
+import { theme } from "@/styles/theme";
 
 export const Container = styled.div`
   display: flex;
@@ -32,6 +33,7 @@ export const Content = styled.div`
     width: 100%;
     background: ${colors.green};
     border-radius: 4px 4px 0 0;
+    color: ${theme.colors.titleTextLight};
   }
 
   .form-content-modal {

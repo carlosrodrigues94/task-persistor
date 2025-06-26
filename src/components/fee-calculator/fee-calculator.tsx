@@ -25,9 +25,13 @@ export const FeeCalculator: FC = () => {
         >
           {Array.from({
             length: 1_000_000 / 50_000,
-          }).map((item, idx) => {
+          }).map((_, idx) => {
             const value = (idx + 1) * 50_000;
-            return <option value={value}>{maskCurrencyBRL(value)}</option>;
+            return (
+              <option key={idx} value={value} onChange={() => {}}>
+                {maskCurrencyBRL(value)}
+              </option>
+            );
           })}
         </select>
         <span>Porcentagem da Entrada</span>
@@ -41,7 +45,11 @@ export const FeeCalculator: FC = () => {
             length: 100 / 5,
           }).map((item, idx) => {
             const value = (idx + 1) * 5;
-            return <option value={value}>{value} %</option>;
+            return (
+              <option key={idx} value={value}>
+                {value} %
+              </option>
+            );
           })}
         </select>
       </SelectContainer>
@@ -52,6 +60,7 @@ export const FeeCalculator: FC = () => {
           <input
             type="text"
             value={maskCurrencyBRL((propertyValue / 100) * percentageValue)}
+            onChange={() => {}}
           />
         </div>
 
@@ -59,6 +68,7 @@ export const FeeCalculator: FC = () => {
           <span>Parcela</span>
           <input
             type="text"
+            onChange={() => {}}
             value={maskCurrencyBRL(
               calculateFinancing(propertyValue, percentageValue, 360)
                 .installment
@@ -69,6 +79,7 @@ export const FeeCalculator: FC = () => {
           <span>Renda mínima</span>
           <input
             type="text"
+            onChange={() => {}}
             value={maskCurrencyBRL(
               calculateNecessarySalary(
                 calculateFinancing(propertyValue, percentageValue, 360)
