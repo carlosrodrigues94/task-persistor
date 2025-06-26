@@ -17,72 +17,9 @@ export const Container = styled.div`
   .button-calculate-financing {
     margin-right: 8px;
   }
-`;
 
-export const Form = styled.form`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: auto;
-`;
-
-export const InputContainer = styled.div<{ isDisabled: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 40px;
-  width: 250px;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  margin: 0 8px 0 0;
-  background: ${({ isDisabled }) => (isDisabled ? "#dcdde1" : "#fff")};
-  padding: 0;
-
-  input {
-    border: 0;
-    padding: 0 0 0 8px;
-    width: 60%;
-    border-radius: 8px;
-    max-width: 150px;
-    margin-right: auto;
-    cursor: ${({ isDisabled }) => isDisabled && "not-allowed"};
-  }
-`;
-
-export const ButtonAddCard = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0 8px 8px 0;
-  color: rgba(0, 0, 0, 0.5);
-  border: 0;
-  width: 42px;
-  height: 100%;
-  margin: 0;
-  background: rgba(0, 0, 0, 0.02);
-  font-size: 18px;
-
-  &:hover {
-    filter: saturate(0.8);
-    color: ${colors.blue};
-  }
-`;
-
-export const ButtonEnableCalc = styled.button<{ isCalculator: boolean }>`
-  display: flex;
-  align-items: center;
-  border: 2px solid;
-  padding: 6px 14px;
-  border-radius: 0;
-  margin: 0;
-  height: 100%;
-  border: 0;
-  background: rgba(0, 0, 0, 0.02);
-
-  svg {
-    color: ${(props) => {
-      return props.isCalculator ? colors.green : "rgba(0, 0, 0, 0.5)";
-    }};
+  .button-add-new-card {
+    margin-right: 8px;
   }
 `;
 
