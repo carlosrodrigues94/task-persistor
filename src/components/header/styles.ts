@@ -26,7 +26,7 @@ export const Form = styled.form`
   margin-right: auto;
 `;
 
-export const InputContainer = styled.div`
+export const InputContainer = styled.div<{ isDisabled: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -35,7 +35,7 @@ export const InputContainer = styled.div`
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.2);
   margin: 0 8px 0 0;
-  background: #fff;
+  background: ${({ isDisabled }) => (isDisabled ? "#dcdde1" : "#fff")};
   padding: 0;
 
   input {
@@ -45,6 +45,7 @@ export const InputContainer = styled.div`
     border-radius: 8px;
     max-width: 150px;
     margin-right: auto;
+    cursor: ${({ isDisabled }) => isDisabled && "not-allowed"};
   }
 `;
 
