@@ -7,11 +7,11 @@ import {
   InstallmentsTitleContainer,
   ItemDetails,
 } from "./styles";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaRedoAlt } from "react-icons/fa";
 import { ModalAddNewInstallment } from "../modals/modal-add-new-installment";
 import { useInstallmentsList } from "@/hooks/installments/use-installments-list";
 import { useInstallmentsCreate } from "@/hooks/installments/use-installments-create";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useInstallmentsDelete } from "@/hooks/installments/use-installments-delete";
 import { ModalDeleteInstallment } from "../modals/modal-delete-installment";
 import { useRecoilState } from "recoil";
@@ -30,10 +30,6 @@ export const InstallMentsList = () => {
     setModalOpen("");
   };
 
-  useEffect(() => {
-    handleRefreshInstallmentsList();
-  }, []);
-
   return (
     <ContainerInstallmentPayments>
       <ModalAddNewInstallment />
@@ -42,6 +38,9 @@ export const InstallMentsList = () => {
         <h2>Installments</h2>
         <button type="button" onClick={handleClickAddNewInstallment}>
           <FaPlus />
+        </button>
+        <button type="button" onClick={handleRefreshInstallmentsList}>
+          <FaRedoAlt />
         </button>
       </InstallmentsTitleContainer>
       {products.map((item) => {

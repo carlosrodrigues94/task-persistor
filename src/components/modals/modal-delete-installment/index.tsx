@@ -14,7 +14,6 @@ export const ModalDeleteInstallment: FC<ModalDeleteInstallmentProps> = ({
   onClickConfirm,
 }) => {
   const [modalOpen, setModalOpen] = useRecoilState(modalsState);
-  const { installments } = useInstallmentsList();
 
   const handleClickCancel = () => {
     setModalOpen("");
