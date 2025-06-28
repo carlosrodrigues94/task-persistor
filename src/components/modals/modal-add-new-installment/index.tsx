@@ -7,6 +7,7 @@ import { modalsState } from "@/state/modals/atoms";
 import { MODALS } from "@/constants/modals";
 import { Installment } from "@/types/installment";
 import { useInstallmentsCreate } from "@/hooks/installments/use-installments-create";
+import { DateTime } from "luxon";
 
 export const ModalAddNewInstallment = () => {
   const { handleCreateInstallment } = useInstallmentsCreate();
@@ -17,13 +18,15 @@ export const ModalAddNewInstallment = () => {
   const [firstInstallmentDate, setFirstInstallmentDate] = useState("");
 
   const handleClickConfirm = async () => {
-    const dueDay = new Date(firstInstallmentDate).getDate();
+    const dueDay = DateTime.fromISO(firstInstallmentDate)
+      .toLocal()
+      .toFormat("dd");
 
     const value = Number(amount.replace(/\D/g, ""));
 
     const installment: Omit<Installment, "id"> = {
       amount: value,
-      dueDay,
+      dueDay: Number(dueDay),
       installments: installmentsQuantity,
       productName,
       firstInstallmentDate,

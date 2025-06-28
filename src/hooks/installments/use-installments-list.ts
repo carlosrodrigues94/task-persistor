@@ -2,7 +2,7 @@ import { installmentsListState } from "@/state/installments/list/atoms";
 import { maskCurrencyBRL } from "@/utils";
 import { calculateRemainingMonths } from "@/utils/installments";
 import { DateTime } from "luxon";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import {
   useRecoilRefresher_UNSTABLE as useRecoilRefresher,
   useRecoilValue,
@@ -16,32 +16,40 @@ export const useInstallmentsList = () => {
     refresh();
   }, [refresh]);
 
-  const products = installments.map((item) => {
-    let { installmentsPaid } = calculateRemainingMonths({
-      firstInstallmentISO: item.firstInstallmentDate,
-      totalInstallments: item.installments,
-    });
+  const products = useMemo(
+    () =>
+      installments.map((item) => {
+        let { installmentsPaid } = calculateRemainingMonths({
+          firstInstallmentISO: item.firstInstallmentDate,
+          totalInstallments: item.installments,
+        });
 
-    if (installmentsPaid >= item.installments) {
-      installmentsPaid = item.installments;
-    }
-    const installmentPrice = Math.trunc(item.amount / item.installments);
-    const amountPaid = installmentPrice * installmentsPaid;
-    let amountRemaining = item.amount - amountPaid;
+        if (installmentsPaid >= item.installments) {
+          installmentsPaid = item.installments;
+        }
+        const installmentPrice = Math.trunc(item.amount / item.installments);
+        const amountPaid = installmentPrice * installmentsPaid;
+        let amountRemaining = item.amount - amountPaid;
 
-    if (amountRemaining < 0) {
-      amountRemaining = 0;
-    }
+        if (amountRemaining < 0) {
+          amountRemaining = 0;
+        }
 
-    return {
-      ...item,
-      amountPaidFormated: maskCurrencyBRL(amountPaid / 100),
-      amountFormated: maskCurrencyBRL(item.amount / 100),
-      amountRemainingFormated: maskCurrencyBRL(amountRemaining / 100),
-      installmentsPaid,
-      dueDate: `${item.dueDay}/${DateTime.now().month}`,
-    };
-  });
+        const monthFirstInstallment =
+          new Date(item.firstInstallmentDate).getMonth() + 1;
+        const dueDate = `${item.dueDay}/${monthFirstInstallment}`;
+
+        return {
+          ...item,
+          amountPaidFormated: maskCurrencyBRL(amountPaid / 100),
+          amountFormated: maskCurrencyBRL(item.amount / 100),
+          amountRemainingFormated: maskCurrencyBRL(amountRemaining / 100),
+          installmentsPaid,
+          dueDate,
+        };
+      }),
+    [installments]
+  );
 
   return {
     handleRefreshInstallmentsList,

@@ -49,13 +49,17 @@ const addEmptySpace = (weekDay: string) => {
 export const useCalendar = () => {
   const { products } = useInstallmentsList();
   const daysWithInstallments = useMemo(() => {
-    return products.map((item) => item.dueDay);
+    return products
+      .filter((item) => {
+        if (new Date(item.firstInstallmentDate) > new Date()) {
+          return false;
+        }
+        return true;
+      })
+      .map((item) => item.dueDay);
   }, [products]);
 
-  const days = getDaysOfMonth(
-    DateTime.now().set({ month: 9 }).toISO(),
-    daysWithInstallments
-  );
+  const days = getDaysOfMonth(DateTime.now().toISO(), daysWithInstallments);
 
   const monthName = DateTime.now().monthLong;
   return { weekDays, addEmptySpace, days, monthName };

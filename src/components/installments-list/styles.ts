@@ -37,6 +37,10 @@ export const InstallmentsTitleContainer = styled.div`
     font-weight: bold;
     font-size: 14px;
   }
+
+  button:nth-child(3) {
+    margin-left: 4px;
+  }
 `;
 
 export const ContainerInstallment = styled.div`
