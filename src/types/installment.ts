@@ -4,5 +4,6 @@ export interface Installment {
   amount: number;
   productName: string;
   dueDay: number;
+  amountEachInstallment: number;
   id: string;
 }

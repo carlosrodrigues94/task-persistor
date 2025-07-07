@@ -3,18 +3,21 @@ import { theme } from "@/styles/theme";
 import styled from "styled-components";
 
 export const Container = styled.div`
-  display: flex;
-  flex-wrap: wrap;
   padding: 4px;
   align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  max-width: 450px;
-
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
   h4 {
     font-weight: bold;
-    margin: 0 auto;
   }
+`;
+
+export const DaysContainer = styled.div`
+  max-width: 450px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 fixed columns */
+  gap: 1px;
 `;
 
 export const DayItem = styled.button<{ hasColor: boolean }>`
@@ -30,9 +33,19 @@ export const DayItem = styled.button<{ hasColor: boolean }>`
   justify-content: center;
   font-weight: bold;
   border: 1px solid ${theme.colors.borderColor};
+
+  @media (max-width: 420px) {
+    width: 42px;
+    height: 42px;
+    font-size: 14px;
+    margin: 2px;
+  }
 `;
 export const WeekDaysContainer = styled.div`
-  display: flex;
+  max-width: 450px;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr); /* 7 fixed columns */
+  gap: 1px;
   align-items: center;
   justify-content: flex-start;
   margin-top: 4px;
@@ -47,5 +60,15 @@ export const WeekDaysContainer = styled.div`
     padding: 4px;
     font-weight: bold;
     width: 48px;
+  }
+
+  @media (max-width: 420px) {
+    span {
+      margin: 1px 2px;
+      width: 42px;
+      height: 42px;
+      padding: 2px;
+      font-size: 14px;
+    }
   }
 `;
