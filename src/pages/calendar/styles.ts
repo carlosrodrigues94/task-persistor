@@ -6,7 +6,6 @@ export const Container = styled.div`
   justify-content: center;
   padding-top: 10px;
   min-height: 80vh;
-  min-width: 405px;
 
   @media (max-width: 1042px) {
     align-items: center;

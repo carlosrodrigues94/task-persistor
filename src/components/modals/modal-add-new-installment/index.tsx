@@ -23,9 +23,11 @@ export const ModalAddNewInstallment = () => {
       .toFormat("dd");
 
     const value = Number(amount.replace(/\D/g, ""));
+    const totalAmount = value * installmentsQuantity;
 
     const installment: Omit<Installment, "id"> = {
-      amount: value,
+      amountEachInstallment: value,
+      amount: totalAmount,
       dueDay: Number(dueDay),
       installments: installmentsQuantity,
       productName,
@@ -74,10 +76,10 @@ export const ModalAddNewInstallment = () => {
           />
         </label>
 
-        <label htmlFor="installment-total-amount">
-          <span>Total amount</span>
+        <label htmlFor="installment-amount">
+          <span>Installment amount</span>
           <input
-            name="installment-total-amount"
+            name="installment-amount"
             value={amount}
             placeholder="R$ 350,00"
             onChange={(event) => setAmount(formatCurrency(event.target.value))}

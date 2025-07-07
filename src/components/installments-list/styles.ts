@@ -19,7 +19,7 @@ export const InstallmentsTitleContainer = styled.div`
   width: 100%;
   align-items: center;
   margin: 0 0 4px 0;
-  min-width: 400px;
+  width: 100%;
 
   h2 {
     margin-left: auto;
