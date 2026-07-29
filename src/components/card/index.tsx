@@ -1,4 +1,4 @@
-import React, { ReactNode, useMemo, useState } from "react";
+import React, { ReactNode, useMemo, useRef, useState } from "react";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import Switch from "react-switch";
 import {
@@ -8,6 +8,7 @@ import {
   FaWallet,
 } from "react-icons/fa";
 import { FiArrowDown, FiMinus } from "react-icons/fi";
+import useOnClickOutside from "use-onclickoutside";
 
 import {
   useCardsDelete,
@@ -25,16 +26,19 @@ import {
 
 import {
   Container,
-  CardHeader,
+  ColorDropdown,
+  ColorPickerWrapper,
   ProgressContent,
   DivContentAddNewTask,
   SwitchAndButtonContent,
 } from "./styles";
-import { lighten } from "polished";
 import { Incomes } from "../incomes";
 import { useIncomesList } from "@/hooks/incomes";
+import { formatCreatedAt } from "@/utils/format-date";
+import { getSwitchColors } from "@/utils/switch-colors";
 
 interface CardProps {
+  createdAt: Date | string;
   currentColor: string;
   onClickColor: (color: string) => void;
   progress: number;
@@ -51,6 +55,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({
   children,
+  createdAt,
   currentColor,
   onClickColor,
   progress: tasksProgress = 0,
@@ -69,6 +74,11 @@ const Card: React.FC<CardProps> = ({
   const { handleDownloadCardData } = useCardsDownload();
   const { handleToggleProgressCalculatorType, handleHideOrRecoverCard } =
     useCardsUpdate();
+
+  const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
+  const colorDropdownRef = useRef<HTMLDivElement>(null);
+
+  useOnClickOutside(colorDropdownRef, () => setIsColorDropdownOpen(false));
 
   const progress: number = useMemo(() => {
     if (isCalculator || progressCalculatorIncremental) {
@@ -115,9 +125,16 @@ const Card: React.FC<CardProps> = ({
   };
 
   const progressValue = getProgressValue();
+  const switchColors = useMemo(
+    () => getSwitchColors(currentColor),
+    [currentColor]
+  );
 
   return (
     <Container currentColor={currentColor}>
+      <time className="card-created-at" dateTime={String(createdAt)}>
+        {formatCreatedAt(createdAt)}
+      </time>
       <a href="/" id="a-download-json">
         json
       </a>
@@ -141,20 +158,41 @@ const Card: React.FC<CardProps> = ({
       >
         <FaPowerOff />
       </button>
-      <CardHeader>
-        {Object.keys(colors).map((key) => {
-          const colorKey = key as ColorKey;
+      <ColorPickerWrapper ref={colorDropdownRef}>
+        <button
+          type="button"
+          className="button-color-card"
+          aria-label="Change card color"
+          aria-expanded={isColorDropdownOpen}
+          onClick={() => setIsColorDropdownOpen((open) => !open)}
+        >
+          <span style={{ backgroundColor: currentColor }} />
+        </button>
+        {isColorDropdownOpen && (
+          <ColorDropdown>
+            {Object.keys(colors).map((key) => {
+              const colorKey = key as ColorKey;
+              const color = colors[colorKey];
+              const isSelected = color === currentColor;
 
-          return (
-            <button
-              key={key}
-              type="button"
-              onClick={() => onClickColor(colors[colorKey])}
-              style={{ backgroundColor: colors[colorKey] }}
-            />
-          );
-        })}
-      </CardHeader>
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  aria-label={`Set color ${key}`}
+                  aria-pressed={isSelected}
+                  className={isSelected ? "is-selected" : undefined}
+                  onClick={() => {
+                    onClickColor(color);
+                    setIsColorDropdownOpen(false);
+                  }}
+                  style={{ backgroundColor: color }}
+                />
+              );
+            })}
+          </ColorDropdown>
+        )}
+      </ColorPickerWrapper>
       <ProgressContent>
         <>
           <CircularProgressbar
@@ -172,6 +210,9 @@ const Card: React.FC<CardProps> = ({
           )}
         </>
       </ProgressContent>
+      <div className="card-title">
+        <h4>{title}</h4>
+      </div>
       <SwitchAndButtonContent currentColor={currentColor}>
         {isCalculator && (
           <>
@@ -205,18 +246,17 @@ const Card: React.FC<CardProps> = ({
           }}
           height={18}
           handleDiameter={22}
-          onHandleColor={currentColor}
-          offHandleColor={currentColor}
+          onHandleColor={switchColors.onHandleColor}
+          offHandleColor={switchColors.offHandleColor}
           checkedIcon={false}
           uncheckedIcon={false}
-          onColor={lighten(0.3, currentColor)}
-          offColor={"#dcdde1"}
+          onColor={switchColors.onColor}
+          offColor={switchColors.offColor}
+          boxShadow={switchColors.boxShadow}
+          activeBoxShadow={switchColors.activeBoxShadow}
           width={42}
         />
       </SwitchAndButtonContent>
-      <div className="card-title">
-        <h4>{title}</h4>
-      </div>
 
       {!tasks.filter((task) => task.cardId === cardId).length && (
         <DivContentAddNewTask currentColor={currentColor}>

@@ -55,6 +55,25 @@ export const SelectContainer = styled.div`
       width: 250px;
     }
   }
+
+  .selected-rate {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(0, 0, 0, 0.65);
+  }
+`;
+
+export const CustomRateInput = styled.input`
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  margin: 8px 0;
+  padding: 4px 8px;
+  border-radius: 4px;
+  width: 250px;
+  background: none;
+  font-size: 16px;
+  font-weight: bold;
 `;
 
 export const SectionPropertyValue = styled.section`

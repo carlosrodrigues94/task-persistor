@@ -38,14 +38,19 @@ export const Container = styled.div<ContainerProps>`
     background: none;
     filter: saturate(1.1);
     position: absolute;
-    right: 8px;
     border-radius: 50%;
     color: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(0, 0, 0, 0.2);
     top: -8px;
-    right: 18px;
     background: #fff;
     padding: 2px;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+  }
+
+  .button-minimize-card {
+    right: 18px;
 
     &:hover {
       transform: none;
@@ -55,6 +60,7 @@ export const Container = styled.div<ContainerProps>`
 
   .button-download-card {
     right: 46px;
+
     &:hover {
       transform: none;
       background: ${colors.cyan};
@@ -83,8 +89,26 @@ export const Container = styled.div<ContainerProps>`
     }
   }
 
+  .card-created-at {
+    width: 100%;
+    margin: 0 0 8px 0;
+    text-align: center;
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.45);
+    letter-spacing: 0.02em;
+  }
+
   .card-title {
     color: rgba(0, 0, 0, 0.5);
+    width: 100%;
+    text-align: center;
+    margin: 0 0 8px 0;
+
+    h4 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 600;
+    }
   }
 
   ::after {
@@ -101,26 +125,73 @@ export const Container = styled.div<ContainerProps>`
 
   .switch {
     margin-left: auto;
+
+    .react-switch-bg {
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
   }
 `;
 
-export const CardHeader = styled.header`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  height: 40px;
-  align-items: center;
-  margin: 0 0 16px 0;
-  button {
-    width: 25px;
-    height: 25px;
-    border: 0;
-    margin: 0 4px;
+export const ColorPickerWrapper = styled.div`
+  position: absolute;
+  top: -8px;
+  right: 74px;
+  z-index: 2;
+
+  .button-color-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    background: #fff;
+    padding: 2px;
+    cursor: pointer;
+
+    span {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.15);
+    }
+
     &:hover {
-      cursor: pointer;
-      transition: all 0.1s;
+      background: #f5f6fa;
+    }
+  }
+`;
+
+export const ColorDropdown = styled.div`
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  z-index: 3;
+
+  button {
+    width: 24px;
+    height: 24px;
+    border: 2px solid transparent;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.1s;
+
+    &:hover {
       transform: scale(1.1);
+    }
+
+    &.is-selected {
+      border-color: rgba(0, 0, 0, 0.35);
     }
   }
 `;
@@ -128,6 +199,7 @@ export const CardHeader = styled.header`
 export const SwitchAndButtonContent = styled.div<{ currentColor: string }>`
   display: flex;
   width: 100%;
+  margin: 0 0 12px 0;
 
   #button-sort-tasks {
     font-size: 14px;

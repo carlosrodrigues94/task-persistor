@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { SimpleModal } from "../simple-modal";
 import { Content } from "./styles";
 import { formatCurrency } from "@/utils";
@@ -9,32 +10,72 @@ import { Installment } from "@/types/installment";
 import { useInstallmentsCreate } from "@/hooks/installments/use-installments-create";
 import { DateTime } from "luxon";
 
+const DEFAULT_INSTALLMENTS_QUANTITY = 2;
+
 export const ModalAddNewInstallment = () => {
   const { handleCreateInstallment } = useInstallmentsCreate();
   const [modalOpen, setModalOpen] = useRecoilState(modalsState);
   const [amount, setAmount] = useState("");
-  const [installmentsQuantity, setInstallmentsQuantity] = useState(2);
+  const [installmentsQuantity, setInstallmentsQuantity] = useState(
+    DEFAULT_INSTALLMENTS_QUANTITY
+  );
   const [productName, setProductName] = useState("");
   const [firstInstallmentDate, setFirstInstallmentDate] = useState("");
 
-  const handleClickConfirm = async () => {
-    const dueDay = DateTime.fromISO(firstInstallmentDate)
-      .toLocal()
-      .toFormat("dd");
+  const resetForm = () => {
+    setAmount("");
+    setProductName("");
+    setInstallmentsQuantity(DEFAULT_INSTALLMENTS_QUANTITY);
+    setFirstInstallmentDate("");
+  };
 
+  const handleClickConfirm = async () => {
+    const trimmedName = productName.trim();
     const value = Number(amount.replace(/\D/g, ""));
+
+    if (!trimmedName) {
+      toast.error("Informe o nome do produto.");
+      return;
+    }
+
+    if (!firstInstallmentDate) {
+      toast.error("Informe a data da primeira parcela.");
+      return;
+    }
+
+    if (installmentsQuantity < 1) {
+      toast.error("A quantidade de parcelas deve ser maior que zero.");
+      return;
+    }
+
+    if (value <= 0) {
+      toast.error("Informe um valor válido para a parcela.");
+      return;
+    }
+
+    const firstInstallment = DateTime.fromISO(firstInstallmentDate, {
+      zone: "local",
+    });
+
+    if (!firstInstallment.isValid) {
+      toast.error("Data da primeira parcela inválida.");
+      return;
+    }
+
+    const dueDay = firstInstallment.day;
     const totalAmount = value * installmentsQuantity;
 
     const installment: Omit<Installment, "id"> = {
       amountEachInstallment: value,
       amount: totalAmount,
-      dueDay: Number(dueDay),
+      dueDay,
       installments: installmentsQuantity,
-      productName,
+      productName: trimmedName,
       firstInstallmentDate,
     };
 
     await handleCreateInstallment(installment);
+    resetForm();
     setModalOpen("");
   };
 
@@ -42,10 +83,7 @@ export const ModalAddNewInstallment = () => {
     <SimpleModal
       isOpen={modalOpen === MODALS.ADD_NEW_INSTALLMENT}
       onClickCancel={() => {
-        setAmount("");
-        setProductName("");
-        setInstallmentsQuantity(0);
-        setFirstInstallmentDate("");
+        resetForm();
         setModalOpen("");
       }}
       headerText="Add new Installment"
@@ -58,6 +96,7 @@ export const ModalAddNewInstallment = () => {
           <input
             name="installment-quantity"
             type="number"
+            min={1}
             value={installmentsQuantity}
             onChange={(event) =>
               setInstallmentsQuantity(Number(event.target.value))
@@ -90,6 +129,7 @@ export const ModalAddNewInstallment = () => {
           <span>First installment date</span>
           <input
             type="date"
+            value={firstInstallmentDate}
             onChange={({ target }) => setFirstInstallmentDate(target.value)}
             name="installment-first-date"
           />
