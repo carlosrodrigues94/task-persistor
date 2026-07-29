@@ -3,10 +3,11 @@ import React, {
   FC,
   useCallback,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 
-import { Container } from "./styles";
+import { CardsGrid, Container } from "./styles";
 
 import { Card } from "@/components/card";
 
@@ -22,6 +23,11 @@ import { useAuth } from "@/hooks/use-auth";
 import { logo } from "@/assets";
 import { useIncomesCreate } from "@/hooks/incomes";
 import { ModalAddNewIncome } from "@/components/modals/modal-add-new-income";
+import { CardSortControls } from "@/components/card-sort-controls";
+import { useDashboardPreferences } from "@/hooks/use-dashboard-preferences";
+import { ICard } from "@/types/card";
+import { CardFilter } from "@/types/dashboard-preferences";
+import { sortCardsByCreatedAt } from "@/utils/sort-cards";
 
 export const Dashboard: FC = () => {
   const { isAuthenticated } = useAuth();
@@ -31,6 +37,8 @@ export const Dashboard: FC = () => {
   const { handleDeleteTask } = useTasksDelete();
   const { handleCreateTask } = useTasksCreate();
   const { handleCreateIncome } = useIncomesCreate();
+  const { preferences, toggleCardSortOrder, setCardFilter } =
+    useDashboardPreferences();
 
   const [showModalAddNewTask, setShowModalAddNewTask] = useState(false);
   const [showModalAddNewCalcTask, setShowModalAddNewCalcTask] = useState(false);
@@ -142,6 +150,28 @@ export const Dashboard: FC = () => {
     [tasksSortType]
   );
 
+  function filterCards(cardsList: ICard[], filter: CardFilter): ICard[] {
+    if (filter === "calculator") {
+      return cardsList.filter((card) => card.isCalculator);
+    }
+
+    if (filter === "regular") {
+      return cardsList.filter((card) => !card.isCalculator);
+    }
+
+    return cardsList;
+  }
+
+  const visibleCards = useMemo(() => {
+    return sortCardsByCreatedAt(
+      filterCards(
+        cards.filter((card) => !card.isHidden),
+        preferences.cardFilter
+      ),
+      preferences.cardSortOrder
+    );
+  }, [cards, preferences.cardFilter, preferences.cardSortOrder]);
+
   function sortTasks(a: ITask, b: ITask): number {
     if (tasksSortType.sortType === "asc" && a.amount < b.amount) {
       return -1;
@@ -200,18 +230,18 @@ export const Dashboard: FC = () => {
         }}
       />
 
-      {cards
-        .filter((card) => !card.isHidden)
-        .sort((a, b) => {
-          const isLater = new Date(a.createdAt) > new Date(b.createdAt);
-          if (isLater) {
-            return 1;
-          }
-          return -1;
-        })
-        .map((card) => (
+      <CardSortControls
+        sortOrder={preferences.cardSortOrder}
+        filter={preferences.cardFilter}
+        onToggleSort={toggleCardSortOrder}
+        onChangeFilter={setCardFilter}
+      />
+
+      <CardsGrid>
+        {visibleCards.map((card) => (
           <Card
             key={card.id}
+            createdAt={card.createdAt}
             isCalculator={card.isCalculator}
             cardId={card.id}
             currentColor={card.color}
@@ -259,6 +289,7 @@ export const Dashboard: FC = () => {
               ))}
           </Card>
         ))}
+      </CardsGrid>
     </Container>
   );
 };

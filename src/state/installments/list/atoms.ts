@@ -1,57 +1,44 @@
 import { selector } from "recoil";
 import { authState } from "@/state/auth/atoms";
-import { onValue, ref } from "firebase/database";
+import { get as getFirebase, ref } from "firebase/database";
 import { database } from "@/services/firebase";
-import { toast } from "react-toastify";
 import { Installment } from "@/types/installment";
 
 export const installmentsListState = selector({
   key: `installmentsListState`,
 
-  get: ({ get }): Installment[] => {
-    try {
-      const { id } = get(authState);
+  get: async ({ get }): Promise<Installment[]> => {
+    const { id } = get(authState);
 
-      if (!id) return [];
+    if (!id) return [];
 
-      const refinstallmentsIds = ref(database, `user-installments-ids/${id}`);
+    const idsSnapshot = await getFirebase(
+      ref(database, `user-installments-ids/${id}`)
+    );
 
-      let installmentsIds: string[] = [];
+    if (!idsSnapshot.exists()) return [];
 
-      onValue(refinstallmentsIds, (snapshot) => {
-        const data = snapshot.val();
+    const installmentIds: string[] = idsSnapshot.val() ?? [];
 
-        if (!snapshot.val()) {
-          installmentsIds = [];
-          return;
-        }
+    const installments = await Promise.all(
+      installmentIds.map(async (installmentId) => {
+        const snapshot = await getFirebase(
+          ref(database, `installments/${installmentId}`)
+        );
 
-        installmentsIds = [];
-      });
+        if (!snapshot.exists()) return null;
 
-      const refInstallments = ref(database, `installments`);
+        const value = snapshot.val();
 
-      let installments: Installment[] = [];
-
-      onValue(refInstallments, (snapshot) => {
-        if (!snapshot.val()) {
-          installments = [];
-          return;
-        }
-        const data = snapshot.val() as Record<string, any>;
-
-        installments = Object.entries(data).map(([key, value]) => ({
-          id: key,
-          tasks: value.tasks || [],
+        return {
+          id: installmentId,
           ...value,
-        }));
-      });
+        } as Installment;
+      })
+    );
 
-      return installments;
-    } catch (err) {
-      const error = err as Record<string, string>;
-      toast.error(error.message);
-      return [];
-    }
+    return installments.filter(
+      (installment): installment is Installment => installment !== null
+    );
   },
 });

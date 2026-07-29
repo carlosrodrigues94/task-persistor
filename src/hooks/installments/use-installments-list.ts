@@ -1,16 +1,18 @@
 import { installmentsListState } from "@/state/installments/list/atoms";
 import { maskCurrencyBRL } from "@/utils";
 import { calculateRemainingMonths } from "@/utils/installments";
-import { DateTime } from "luxon";
 import { useCallback, useMemo } from "react";
 import {
   useRecoilRefresher_UNSTABLE as useRecoilRefresher,
-  useRecoilValue,
+  useRecoilValueLoadable,
 } from "recoil";
 
 export const useInstallmentsList = () => {
-  const installments = useRecoilValue(installmentsListState);
+  const loadable = useRecoilValueLoadable(installmentsListState);
   const refresh = useRecoilRefresher(installmentsListState);
+
+  const installments =
+    loadable.state === "hasValue" ? loadable.contents : [];
 
   const handleRefreshInstallmentsList = useCallback(() => {
     refresh();
@@ -19,33 +21,29 @@ export const useInstallmentsList = () => {
   const products = useMemo(
     () =>
       installments.map((item) => {
-        let { installmentsPaid } = calculateRemainingMonths({
+        const progress = calculateRemainingMonths({
           firstInstallmentISO: item.firstInstallmentDate,
           totalInstallments: item.installments,
+          dueDay: item.dueDay,
         });
 
-        if (installmentsPaid >= item.installments) {
-          installmentsPaid = item.installments;
-        }
-        const installmentPrice = Math.trunc(item.amount / item.installments);
-        const amountPaid = installmentPrice * installmentsPaid;
-        let amountRemaining = item.amount - amountPaid;
-
-        if (amountRemaining < 0) {
-          amountRemaining = 0;
-        }
-
-        const monthFirstInstallment =
-          new Date(item.firstInstallmentDate).getMonth() + 1;
-        const dueDate = `${item.dueDay}/${monthFirstInstallment}`;
+        const installmentsPaid = progress.installmentsPaid;
+        const amountPaid = item.amountEachInstallment * installmentsPaid;
+        const amountRemaining = Math.max(0, item.amount - amountPaid);
+        const dueDate = `Dia ${item.dueDay}`;
 
         return {
           ...item,
           amountPaidFormated: maskCurrencyBRL(amountPaid / 100),
           amountFormated: maskCurrencyBRL(item.amount / 100),
           amountRemainingFormated: maskCurrencyBRL(amountRemaining / 100),
+          amountEachInstallmentFormated: maskCurrencyBRL(
+            item.amountEachInstallment / 100
+          ),
           installmentsPaid,
           dueDate,
+          isCompleted: progress.isCompleted,
+          percentage: progress.percentage,
         };
       }),
     [installments]
@@ -55,5 +53,6 @@ export const useInstallmentsList = () => {
     handleRefreshInstallmentsList,
     installments,
     products,
+    isLoading: loadable.state === "loading",
   };
 };

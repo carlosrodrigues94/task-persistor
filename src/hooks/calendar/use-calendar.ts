@@ -1,66 +1,76 @@
 import { DateTime } from "luxon";
 import { useMemo } from "react";
 import { useInstallmentsList } from "../installments/use-installments-list";
+import { isInstallmentActive } from "@/utils/installments";
 
-const getDaysOfMonth = (
+const WEEKDAY_ORDER = [7, 1, 2, 3, 4, 5, 6] as const;
+
+function getLocalizedWeekDays(): string[] {
+  return WEEKDAY_ORDER.map((weekday) =>
+    DateTime.fromObject({ weekday }).setLocale("pt-BR").toFormat("ccc")
+  );
+}
+
+function getDaysOfMonth(
   dateISO: string,
   daysWithInstallment: number[]
-): { weekName: string; day: string; hasInvoice: boolean }[] => {
-  const now = DateTime.fromISO(dateISO);
-  const days: { weekName: string; day: string; hasInvoice: boolean }[] = [];
+): { id: string; day: string; hasInvoice: boolean }[] {
+  const currentMonth = DateTime.fromISO(dateISO);
 
-  if (!now.daysInMonth) return [];
+  if (!currentMonth.isValid || !currentMonth.daysInMonth) return [];
 
-  for (let item = 0; item < now.daysInMonth; item++) {
-    const day = item + 1;
+  const days: { id: string; day: string; hasInvoice: boolean }[] = [];
 
-    const weekName = now.set({ day }).toFormat("ccc");
-    const dayNumber = now.set({ day }).toFormat("dd");
+  for (let day = 1; day <= currentMonth.daysInMonth; day++) {
     days.push({
-      day: dayNumber,
-      weekName,
-      hasInvoice: daysWithInstallment.includes(day) ? true : false,
+      id: `day-${day}`,
+      day: String(day),
+      hasInvoice: daysWithInstallment.includes(day),
     });
   }
 
   return days;
-};
+}
 
-const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+function getMonthStartPadding(dateISO: string): { id: string; day: string; hasInvoice: boolean }[] {
+  const firstDayOfMonth = DateTime.fromISO(dateISO).startOf("month");
+  const paddingCount = firstDayOfMonth.weekday % 7;
 
-const addEmptySpace = (weekDay: string) => {
-  const dict: Record<string, number> = {
-    Mon: 1,
-    Tue: 2,
-    Wed: 3,
-    Thu: 4,
-    Fri: 5,
-    Sat: 6,
-    Sun: 0,
-  };
-
-  let arr = Array.from({ length: dict[weekDay] });
-
-  let result = arr.map(() => ({ day: "", hasInvoice: false }));
-
-  return result;
-};
+  return Array.from({ length: paddingCount }, (_, index) => ({
+    id: `pad-${index}`,
+    day: "",
+    hasInvoice: false,
+  }));
+}
 
 export const useCalendar = () => {
   const { products } = useInstallmentsList();
+  const currentMonthISO = DateTime.now().toISO();
+
   const daysWithInstallments = useMemo(() => {
     return products
-      .filter((item) => {
-        if (new Date(item.firstInstallmentDate) > new Date()) {
-          return false;
-        }
-        return true;
-      })
+      .filter((item) =>
+        isInstallmentActive({
+          firstInstallmentISO: item.firstInstallmentDate,
+          totalInstallments: item.installments,
+          dueDay: item.dueDay,
+        })
+      )
       .map((item) => item.dueDay);
   }, [products]);
 
-  const days = getDaysOfMonth(DateTime.now().toISO(), daysWithInstallments);
+  const days = useMemo(
+    () => getDaysOfMonth(currentMonthISO, daysWithInstallments),
+    [currentMonthISO, daysWithInstallments]
+  );
 
-  const monthName = DateTime.now().monthLong;
-  return { weekDays, addEmptySpace, days, monthName };
+  const paddingDays = useMemo(
+    () => getMonthStartPadding(currentMonthISO),
+    [currentMonthISO]
+  );
+
+  const weekDays = useMemo(() => getLocalizedWeekDays(), []);
+  const monthName = DateTime.now().setLocale("pt-BR").toFormat("LLLL yyyy");
+
+  return { weekDays, paddingDays, days, monthName };
 };

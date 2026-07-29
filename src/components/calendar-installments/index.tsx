@@ -2,9 +2,10 @@ import { useCalendar } from "@/hooks/calendar/use-calendar";
 import { Container, DayItem, WeekDaysContainer, DaysContainer } from "./styles";
 
 export const CalendarInstallments = () => {
-  const { weekDays, addEmptySpace, days, monthName } = useCalendar();
+  const { weekDays, paddingDays, days, monthName } = useCalendar();
 
-  const handleClickShowInvoices = () => {};
+  const calendarDays = [...paddingDays, ...days];
+
   return (
     <Container>
       <h4>{monthName}</h4>
@@ -14,11 +15,13 @@ export const CalendarInstallments = () => {
         ))}
       </WeekDaysContainer>
       <DaysContainer>
-        {[...addEmptySpace(days[0].weekName), ...days].map((item) => (
+        {calendarDays.map((item) => (
           <DayItem
-            onClick={handleClickShowInvoices}
-            key={item.day}
+            key={item.id}
+            type="button"
             hasColor={item.hasInvoice}
+            disabled={!item.day}
+            aria-hidden={!item.day}
           >
             {item.day}
           </DayItem>

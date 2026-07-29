@@ -33,6 +33,8 @@ export const DayItem = styled.button<{ hasColor: boolean }>`
   justify-content: center;
   font-weight: bold;
   border: 1px solid ${theme.colors.borderColor};
+  visibility: ${({ disabled }) => (disabled ? "hidden" : "visible")};
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
 
   @media (max-width: 420px) {
     width: 42px;

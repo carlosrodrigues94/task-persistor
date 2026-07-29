@@ -17,7 +17,6 @@ import { ModalDeleteInstallment } from "../modals/modal-delete-installment";
 import { useRecoilState } from "recoil";
 import { modalsState } from "@/state/modals/atoms";
 import { MODALS } from "@/constants/modals";
-import { formatCurrency } from "@/utils";
 
 export const InstallMentsList = () => {
   const [_, setModalOpen] = useRecoilState(modalsState);
@@ -49,12 +48,15 @@ export const InstallMentsList = () => {
           productName,
           amountFormated,
           amountPaidFormated,
+          amountEachInstallmentFormated,
           installments,
           installmentsPaid,
+          dueDate,
         } = item;
+
         return (
           <ContainerInstallment
-            key={productName}
+            key={item.id}
             onClick={() => {
               setModalOpen(MODALS.DELETE_INSTALLMENT_CONFIRM);
               setInstallmentId(item.id);
@@ -62,8 +64,7 @@ export const InstallMentsList = () => {
           >
             <ContentItemTitleAndValue>
               <span>
-                {item.dueDate} (
-                {formatCurrency(String(item.amountEachInstallment))})
+                {dueDate} ({amountEachInstallmentFormated})
               </span>
               <span>{productName}</span>
               <span>{amountFormated}</span>
