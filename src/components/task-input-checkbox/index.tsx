@@ -1,10 +1,22 @@
 import React, { ChangeEvent } from "react";
 import { FaCheckSquare, FaSquare } from "react-icons/fa";
-import { FiMinus, FiPlus } from "react-icons/fi";
+import { FiCalendar, FiMinus, FiPlus } from "react-icons/fi";
 import { ITask } from "@/types/task";
 import { formatCurrency } from "@/utils";
+import {
+  formatDueDate,
+  getDueDateTemperature,
+} from "@/utils/format-date";
 
-import { Container, LabelInputCheckBox, DivContentButtons } from "./styles";
+import {
+  Container,
+  LabelInputCheckBox,
+  DivContentButtons,
+  TaskDetails,
+  TaskMeta,
+  TaskTitle,
+  DueDateBadge,
+} from "./styles";
 
 type TaskInputCheckboxProps = {
   task: ITask;
@@ -12,6 +24,7 @@ type TaskInputCheckboxProps = {
   onClickDeleteTask: (taskId: string) => void;
   onClickAddTask: (data: { taskPosition: number; cardId: string }) => void;
   currentColor: string;
+  isDetailed?: boolean;
 };
 
 const TaskInputCheckbox: React.FC<TaskInputCheckboxProps> = ({
@@ -20,23 +33,26 @@ const TaskInputCheckbox: React.FC<TaskInputCheckboxProps> = ({
   onClickDeleteTask,
   onClickAddTask,
   currentColor,
+  isDetailed = false,
 }) => {
-  const getTaskDescription = () => {
-    const { description, amount, isCalculator } = task;
+  const amountLabel =
+    task.isCalculator && task.amount
+      ? formatCurrency(String(task.amount / 100))
+      : null;
 
-    if (isCalculator) {
-      const value = formatCurrency(String(amount / 100));
-      return `${description} ${value}`;
-    }
+  const dueDateValue = task.dueDate ?? task.createdAt;
+  const dueDateLabel = formatDueDate(dueDateValue);
+  const dueDateTemperature = getDueDateTemperature(
+    task.isCompleted ? undefined : dueDateValue
+  );
 
-    return `${task.description}`;
-  };
   return (
-    <Container>
+    <Container isDetailed={isDetailed}>
       <LabelInputCheckBox
         currentColor={currentColor}
         htmlFor={task.id}
-        key={task.id}
+        isDetailed={isDetailed}
+        isCompleted={task.isCompleted}
       >
         {task.isCompleted ? (
           <FaCheckSquare color={currentColor} />
@@ -51,9 +67,47 @@ const TaskInputCheckbox: React.FC<TaskInputCheckboxProps> = ({
           name="input-task"
           id={task.id}
         />
-        <span>{getTaskDescription()}</span>
+
+        {isDetailed ? (
+          <TaskDetails>
+            <TaskTitle isCompleted={task.isCompleted}>
+              {task.description}
+            </TaskTitle>
+            <TaskMeta>
+              <DueDateBadge
+                color={dueDateTemperature.color}
+                background={dueDateTemperature.background}
+                isCompleted={task.isCompleted}
+              >
+                <FiCalendar />
+                {dueDateLabel}
+              </DueDateBadge>
+              {amountLabel && <span className="amount">{amountLabel}</span>}
+              <span className="status">
+                {task.isCompleted ? "Concluído" : "Pendente"}
+              </span>
+            </TaskMeta>
+          </TaskDetails>
+        ) : (
+          <>
+            <span>
+              {task.isCalculator && amountLabel
+                ? `${task.description} ${amountLabel}`
+                : task.description}
+            </span>
+            <DueDateBadge
+              color={dueDateTemperature.color}
+              background={dueDateTemperature.background}
+              isCompleted={task.isCompleted}
+              isCompact
+            >
+              <FiCalendar />
+              {dueDateLabel}
+            </DueDateBadge>
+          </>
+        )}
       </LabelInputCheckBox>
-      <DivContentButtons currentColor={currentColor}>
+      <DivContentButtons currentColor={currentColor} isDetailed={isDetailed}>
         <button type="button" onClick={() => onClickDeleteTask(task.id)}>
           <FiMinus />
         </button>

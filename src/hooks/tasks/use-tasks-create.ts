@@ -24,10 +24,14 @@ export const useTasksCreate = () => {
 
     if (!card) return;
 
+    const todayISO = new Date().toISOString();
+
     const newTask: ITask = {
       id: uuid(),
       cardId: card.id,
       ...data.task,
+      createdAt: data.task.createdAt ?? todayISO,
+      dueDate: data.task.dueDate ?? todayISO.slice(0, 10),
     };
 
     const updates: Record<string, ICard> = {

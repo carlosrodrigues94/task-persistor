@@ -1,38 +1,44 @@
 import { colors } from "@/styles/colors";
+import { theme } from "@/styles/theme";
 import styled from "styled-components";
 
 export const Content = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: auto;
+  align-items: stretch;
+  justify-content: flex-start;
   width: 100%;
-  margin: 16px 0;
 `;
 
 export const InputContainer = styled.div<{ isDisabled: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 40px;
-  width: 250px;
+  min-height: 42px;
+  width: 100%;
   border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  margin: 0 8px 0 0;
-  background: ${({ isDisabled }) => (isDisabled ? "#dcdde1" : "#fff")};
-  padding: 0;
+  border: 1px solid ${theme.colors.borderColor};
+  background: ${({ isDisabled }) => (isDisabled ? "#eef0f3" : "#fafbfc")};
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+  &:focus-within {
+    background: #fff;
+    border-color: ${colors.green};
+    box-shadow: 0 0 0 3px rgba(29, 209, 161, 0.18);
+  }
 
   input {
     border: 0;
-    padding: 0 0 0 8px;
-    width: 60%;
-    border-radius: 8px;
-    max-width: 150px;
-    margin-right: auto;
+    background: transparent;
+    padding: 0 12px;
+    width: 100%;
+    min-height: 42px;
+    color: ${theme.colors.titleBoldTextColor};
+    font-size: 14px;
     cursor: ${({ isDisabled }) => isDisabled && "not-allowed"};
 
-    @media (max-width: 500px) {
-      width: 100px;
+    &::placeholder {
+      color: rgba(0, 0, 0, 0.35);
     }
   }
 `;
@@ -40,17 +46,23 @@ export const InputContainer = styled.div<{ isDisabled: boolean }>`
 export const ButtonEnableCalc = styled.button<{ isCalculator: boolean }>`
   display: flex;
   align-items: center;
-  border: 2px solid;
-  padding: 6px 14px;
-  border-radius: 0;
-  margin: 0;
-  height: 100%;
+  justify-content: center;
   border: 0;
-  background: rgba(0, 0, 0, 0.02);
+  border-left: 1px solid ${theme.colors.borderColor};
+  padding: 0 14px;
+  margin: 0;
+  min-height: 42px;
+  background: ${({ isCalculator }) =>
+    isCalculator ? "rgba(29, 209, 161, 0.12)" : "rgba(0, 0, 0, 0.02)"};
 
   svg {
     color: ${(props) => {
-      return props.isCalculator ? colors.green : "rgba(0, 0, 0, 0.5)";
+      return props.isCalculator ? colors.green : "rgba(0, 0, 0, 0.45)";
     }};
+  }
+
+  &:hover {
+    background: ${({ isCalculator }) =>
+      isCalculator ? "rgba(29, 209, 161, 0.18)" : "rgba(0, 0, 0, 0.04)"};
   }
 `;

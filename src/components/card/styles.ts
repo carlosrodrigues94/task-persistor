@@ -4,6 +4,7 @@ import { theme } from "@/styles/theme";
 
 interface ContainerProps {
   currentColor: string;
+  isMaximized?: boolean;
 }
 
 export const Container = styled.div<ContainerProps>`
@@ -11,16 +12,16 @@ export const Container = styled.div<ContainerProps>`
   align-items: center;
   justify-content: flex-start;
   flex-direction: column;
-  min-height: 500px;
-  width: 350px;
+  min-height: ${({ isMaximized }) => (isMaximized ? "560px" : "500px")};
+  width: ${({ isMaximized }) => (isMaximized ? "700px" : "350px")};
   border-radius: 8px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   background: #fff;
   padding: 14px;
-  transition: all 0.3s;
+  transition: width 0.3s ease, min-height 0.3s ease;
   position: relative;
   margin: 16px;
-  z-index: 0;
+  z-index: ${({ isMaximized }) => (isMaximized ? 1 : 0)};
 
   #a-download-json {
     display: none;
@@ -31,7 +32,8 @@ export const Container = styled.div<ContainerProps>`
   }
 
   .button-minimize-card,
-  .button-download-card {
+  .button-download-card,
+  .button-maximize-card {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -64,6 +66,15 @@ export const Container = styled.div<ContainerProps>`
     &:hover {
       transform: none;
       background: ${colors.cyan};
+    }
+  }
+
+  .button-maximize-card {
+    right: 102px;
+
+    &:hover {
+      transform: none;
+      background: ${colors.green};
     }
   }
 
@@ -267,4 +278,14 @@ export const ProgressContent = styled.div`
   height: 150px;
   width: 100%;
   margin: 0 0 8px 0;
+`;
+
+export const TasksList = styled.div<{ isMaximized: boolean }>`
+  display: grid;
+  grid-template-columns: ${({ isMaximized }) =>
+    isMaximized ? "repeat(2, minmax(0, 1fr))" : "1fr"};
+  gap: ${({ isMaximized }) => (isMaximized ? "10px" : "4px")};
+  width: 100%;
+  margin-top: 4px;
+  z-index: 2;
 `;

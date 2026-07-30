@@ -46,26 +46,33 @@ const ModalAddNewIncome: React.FC<ModalAddNewIncomeProps> = ({
       }}
       headerText="Add new Income"
       typeButton="submit"
-      onSubmit={() => {}}
+      onSubmit={handleClickConfirm}
     >
       <Content>
-        <input
-          type="text"
-          value={inputTitle}
-          ref={refInput}
-          onChange={(event) => setInputTitle(event.target.value)}
-          className="input-income"
-          placeholder="Title"
-          maxLength={30}
-        />
+        <label htmlFor="income-title">
+          <span>Título</span>
+          <input
+            id="income-title"
+            type="text"
+            value={inputTitle}
+            ref={refInput}
+            onChange={(event) => setInputTitle(event.target.value)}
+            placeholder="Ex: Salário"
+            maxLength={30}
+          />
+        </label>
 
-        <input
-          value={inputAmount}
-          placeholder="Valor"
-          onChange={({ target }) => {
-            setInputAmount(formatCurrency(target.value));
-          }}
-        />
+        <label htmlFor="income-amount">
+          <span>Valor</span>
+          <input
+            id="income-amount"
+            value={inputAmount}
+            placeholder="R$ 0,00"
+            onChange={({ target }) => {
+              setInputAmount(formatCurrency(target.value));
+            }}
+          />
+        </label>
       </Content>
     </SimpleModal>
   );
