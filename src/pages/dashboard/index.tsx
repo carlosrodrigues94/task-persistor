@@ -60,15 +60,19 @@ export const Dashboard: FC = () => {
     handleChangeTaskCheck({ cardId, isChecked: checked, taskId: id });
   }
 
-  function handleConfirmAddNewTask(value: string) {
+  function handleConfirmAddNewTask(data: {
+    description: string;
+    dueDate: string;
+  }) {
     handleCreateTask({
       cardId: newTaskCardId,
       task: {
         amount: 0,
-        description: value,
+        description: data.description,
         isCalculator: false,
         isCompleted: false,
         position: newTaskPosition,
+        dueDate: data.dueDate,
       },
     });
     setShowModalAddNewTask(false);
@@ -79,6 +83,7 @@ export const Dashboard: FC = () => {
   function handleConfirmAddNewCalcTask(data: {
     value: string;
     description: string;
+    dueDate: string;
   }) {
     const value = Number(data.value.replace(/\D/g, ""));
 
@@ -90,6 +95,7 @@ export const Dashboard: FC = () => {
         position: newTaskPosition,
         amount: value * 100,
         isCalculator: true,
+        dueDate: data.dueDate,
       },
     });
     setShowModalAddNewCalcTask(false);
@@ -202,7 +208,7 @@ export const Dashboard: FC = () => {
       {!isAuthenticated && <img id="img-logo" src={logo} alt="logo" />}
       <ModalAddNewTask
         isOpen={showModalAddNewTask}
-        onClickConfirm={(value) => handleConfirmAddNewTask(value)}
+        onClickConfirm={(data) => handleConfirmAddNewTask(data)}
         onClickCancel={() => {
           setShowModalAddNewTask(false);
         }}

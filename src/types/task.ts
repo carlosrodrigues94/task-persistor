@@ -6,4 +6,6 @@ export type ITask = {
   cardId: string;
   amount: number;
   isCalculator: boolean;
+  createdAt?: string | Date;
+  dueDate?: string;
 };

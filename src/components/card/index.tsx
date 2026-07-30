@@ -7,7 +7,7 @@ import {
   FaSortAmountUpAlt,
   FaWallet,
 } from "react-icons/fa";
-import { FiArrowDown, FiMinus } from "react-icons/fi";
+import { FiArrowDown, FiMaximize2, FiMinimize2, FiMinus } from "react-icons/fi";
 import useOnClickOutside from "use-onclickoutside";
 
 import {
@@ -31,6 +31,7 @@ import {
   ProgressContent,
   DivContentAddNewTask,
   SwitchAndButtonContent,
+  TasksList,
 } from "./styles";
 import { Incomes } from "../incomes";
 import { useIncomesList } from "@/hooks/incomes";
@@ -76,6 +77,7 @@ const Card: React.FC<CardProps> = ({
     useCardsUpdate();
 
   const [isColorDropdownOpen, setIsColorDropdownOpen] = useState(false);
+  const [isMaximized, setIsMaximized] = useState(false);
   const colorDropdownRef = useRef<HTMLDivElement>(null);
 
   useOnClickOutside(colorDropdownRef, () => setIsColorDropdownOpen(false));
@@ -130,14 +132,35 @@ const Card: React.FC<CardProps> = ({
     [currentColor]
   );
 
+  const detailedChildren = useMemo(
+    () =>
+      React.Children.map(children, (child) => {
+        if (!React.isValidElement(child)) return child;
+
+        return React.cloneElement(child as React.ReactElement<{ isDetailed?: boolean }>, {
+          isDetailed: isMaximized,
+        });
+      }),
+    [children, isMaximized]
+  );
+
   return (
-    <Container currentColor={currentColor}>
+    <Container currentColor={currentColor} isMaximized={isMaximized}>
       <time className="card-created-at" dateTime={String(createdAt)}>
         {formatCreatedAt(createdAt)}
       </time>
       <a href="/" id="a-download-json">
         json
       </a>
+      <button
+        type="button"
+        className="button-maximize-card"
+        aria-label={isMaximized ? "Minimize card" : "Maximize card"}
+        aria-pressed={isMaximized}
+        onClick={() => setIsMaximized((open) => !open)}
+      >
+        {isMaximized ? <FiMinimize2 /> : <FiMaximize2 />}
+      </button>
       <button
         className="button-download-card"
         onClick={() => {
@@ -266,7 +289,7 @@ const Card: React.FC<CardProps> = ({
         </DivContentAddNewTask>
       )}
 
-      {children}
+      <TasksList isMaximized={isMaximized}>{detailedChildren}</TasksList>
     </Container>
   );
 };
